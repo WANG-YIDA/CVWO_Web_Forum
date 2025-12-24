@@ -1,0 +1,11 @@
+.App {
+    text-align: center;
+}
+
+li {
+    list-style-type: none;
+}
+
+ul {
+    padding-inline-start: unset;
+}
