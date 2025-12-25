@@ -21,8 +21,11 @@ func createTables(dbConn *sql.DB) {
 
 	CREATE TABLE IF NOT EXISTS topics (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		description TEXT,
+		user_id INTEGER NOT NULL,
 		name TEXT UNIQUE NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		FOREIGN KEY(user_id) REFERENCES users(id),
 	);
 
 	CREATE TABLE IF NOT EXISTS posts (
