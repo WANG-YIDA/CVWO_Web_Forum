@@ -7,11 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type Database struct {
-	Conn *sql.DB
-}
-
-func createTables(dbConn *sql.DB) {
+func createTables(db *sql.DB) {
 	tableSQL := `
 	CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,8 +20,8 @@ func createTables(dbConn *sql.DB) {
 		description TEXT,
 		user_id INTEGER NOT NULL,
 		name TEXT UNIQUE NOT NULL,
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-		FOREIGN KEY(user_id) REFERENCES users(id),
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY(user_id) REFERENCES users(id)
 	);
 
 	CREATE TABLE IF NOT EXISTS posts (
@@ -50,27 +46,27 @@ func createTables(dbConn *sql.DB) {
 	);
 	`
 
-	_, err := dbConn.Exec(tableSQL)
+	_, err := db.Exec(tableSQL)
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Tables created successfully")
 }
 
-func GetDB() (*Database, error) {
-	dbConn, err := sql.Open("sqlite3", "cmd/server/forum.db")
+func GetDB() (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", "cmd/server/forum.db")
 	if err != nil {
 		return nil, err
 	}
 	
-	err = dbConn.Ping()
+	err = db.Ping()
 	if err != nil {
 		return nil, err
 	}
 
 	log.Println("Database connected successfully")
 	
-	createTables(dbConn)
+	createTables(db)
 
-	return &Database{Conn: dbConn}, nil
+	return db, nil
 }

@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/CVWO/sample-go-app/internal/database"
-	"github.com/CVWO/sample-go-app/internal/router"
+	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/database"
+	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/router"
 )
 
 
@@ -16,8 +16,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Conn.Close()
-
+	defer db.Close()
+	
 	fmt.Print("Listening on port 8000 at http://localhost:8000")
 	log.Fatalln(http.ListenAndServe(":8000", r))
 }

@@ -18,6 +18,7 @@ const App: React.FC = () => {
     console.log("Frontend starting, waiting for Go...");
 
     useEffect(() => {
+        //for testing connection with backend
         fetch("http://localhost:8000/handshake")
             .then((res) => res.json())
             .then((data) => console.log(data.message))

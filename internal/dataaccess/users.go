@@ -1,15 +1,16 @@
-package users
+package dataaccess
 
 import (
-	"github.com/CVWO/sample-go-app/internal/database"
-	"github.com/CVWO/sample-go-app/internal/models"
+	"database/sql"
+
+	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/models"
 )
 
-func List(db *database.Database) ([]models.User, error) {
+func List(db *sql.DB) ([]models.User, error) {
 	users := []models.User{
 		{
 			ID:   1,
-			Name: "CVWO",
+			Username: "CVWO",
 		},
 	}
 	return users, nil
