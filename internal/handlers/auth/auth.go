@@ -14,11 +14,7 @@ const (
 	Login = "auth.HandleLogin"
 	Register = "auth.HandleRegister"
 
-	SuccessfulLoginMessage     = "Login successfully"
-	SuccessfulRegisterMessage  = "Register successfully"
 	ErrRetrieveDatabase        = "Failed to retrieve database in %s"
-	ErrLogin 				   = "Failed to login in %s"
-	ErrRegister				   = "Failed to register in %s"
 	ErrEncodeView              = "Failed to encode data in %s"
 )
 
@@ -37,7 +33,6 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) (*api.Response, error) 
 		Payload: api.Payload{
 			Data: data,
 		},
-		Messages: []string{SuccessfulLoginMessage},
 	}, nil
 }
 
@@ -49,13 +44,12 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) (*api.Response, erro
 
 	data, err := json.Marshal(result)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrRegister, Register))
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrEncodeView, Register))
 	}
 
 	return &api.Response{
 		Payload: api.Payload{
 			Data: data,
 		},
-		Messages: []string{SuccessfulRegisterMessage},
 	}, nil
 }

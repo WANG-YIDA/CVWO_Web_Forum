@@ -1,7 +1,7 @@
 package models
 
 type Result struct {
-	Success string `json:"success"`	
-	Error string `json:"error"`
-	User User `json:"user"`
+	Success bool `json:"success"`	
+	Error string `json:"error,omitempty"`
+	User *User `json:"user,omitempty"`
 }
