@@ -25,7 +25,7 @@ func GetRoutes() func(r chi.Router) {
 		
 
 		// Authentication Handlers
-		r.Get("/auth/login", func(w http.ResponseWriter, req *http.Request) {
+		r.Post("/auth/login", func(w http.ResponseWriter, req *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*") 
 			w.Header().Set("Content-Type", "application/json")
 
@@ -34,7 +34,7 @@ func GetRoutes() func(r chi.Router) {
         		w.WriteHeader(http.StatusInternalServerError)
         		json.NewEncoder(w).Encode(map[string]interface{}{
             		"success": false,
-            		"error": "Failed to login",
+            		"error": err,
         		})
         		return
     		}
@@ -42,7 +42,7 @@ func GetRoutes() func(r chi.Router) {
 			json.NewEncoder(w).Encode(response)
 		})	
 
-		r.Get("/auth/register", func(w http.ResponseWriter, req *http.Request) {
+		r.Post("/auth/register", func(w http.ResponseWriter, req *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*") 
 			w.Header().Set("Content-Type", "application/json")
 
@@ -51,7 +51,7 @@ func GetRoutes() func(r chi.Router) {
         		w.WriteHeader(http.StatusInternalServerError)
         		json.NewEncoder(w).Encode(map[string]interface{}{
             		"success": false,
-            		"error": "Failed to register",
+            		"error": err,
         		})
         		return
     		}
