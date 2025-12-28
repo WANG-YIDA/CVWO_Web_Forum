@@ -25,7 +25,7 @@ const (
 
 var validUsernamePattern = regexp.MustCompile("^[a-zA-Z0-9_-]{3,16}$")
 
-func Login(w http.ResponseWriter, r *http.Request) (*models.Result, error) {
+func Login(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -72,7 +72,7 @@ func Login(w http.ResponseWriter, r *http.Request) (*models.Result, error) {
 
 }
 
-func Register(w http.ResponseWriter, r *http.Request) (*models.Result, error) {
+func Register(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
