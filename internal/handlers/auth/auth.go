@@ -24,7 +24,7 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) (*api.Response, error) 
 		return nil, err
 	}
 
-	data, err := json.Marshal(result)
+	data, err := json.Marshal(*result)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrEncodeView, Login))
 	}
@@ -42,7 +42,7 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) (*api.Response, erro
 		return nil, err
 	}
 
-	data, err := json.Marshal(result)
+	data, err := json.Marshal(*result)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrEncodeView, Register))
 	}
