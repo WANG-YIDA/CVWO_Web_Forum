@@ -15,11 +15,6 @@ import (
 )
 
 const (
-	ErrRetrieveDatabase = "Failed to retrieve database in %s"
-	ErrGetUsernameFromRequest = "Invalid request in %s"
-	ErrDB = "Databse query failed in %s"
-	
-
 	InvalidUsername = "Invalid Username: must consist of 3-16 alphannumeric characters, _ or -"
 )
 
@@ -34,30 +29,29 @@ func Login(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	defer db.Close()
 
 	//Get username from request
-	var body struct {
-	    Username string `json:"username"`
-	}
+	user := &models.User{}	
+
 	var username string
-	err = json.NewDecoder(r.Body).Decode(&body)
-	username = body.Username
+	err = json.NewDecoder(r.Body).Decode(user)
+	username = user.Username
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetUsernameFromRequest, "api.Login"))
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.Login"))
 	}
 
 	// Validation
 	valid := validUsernamePattern.MatchString(username)
 	if !valid {
-		return &models.Result{
+		return &models.AuthResult{
 			Success: false,
 			Error: InvalidUsername,
 		}, nil
 	}
 
 	// Check if username exists
-	user, err := dataaccess.GetUserByUsername(db, username)	
+	user, err = dataaccess.GetUserByUsername(db, username)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
-            return &models.Result{
+            return &models.AuthResult{
 				Success: false,
 				Error: fmt.Sprintf("User does not exist: %s", username),
 			}, nil
@@ -65,36 +59,34 @@ func Login(w http.ResponseWriter, r *http.Request) (interface{}, error) {
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.Login"))
     }
 
-	return &models.Result{
+	return &models.AuthResult{
 		Success: true,
 		User: user,
 	}, nil
-
 }
 
 func Register(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.register"))
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.Register"))
 	}
 	defer db.Close()
 
 	//Get username from request
-	var body struct {
-	    Username string `json:"username"`
-	}
+	user := &models.User{}
+
 	var username string
-	err = json.NewDecoder(r.Body).Decode(&body)
-	username = body.Username
+	err = json.NewDecoder(r.Body).Decode(user)
+	username = user.Username
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetUsernameFromRequest, "api.register"))
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.Register"))
 	}
 
 	// Validation
 	valid := validUsernamePattern.MatchString(username)
 	if !valid {
-		return &models.Result{
+		return &models.AuthResult{
 			Success: false,
 			Error: InvalidUsername,
 		}, nil
@@ -103,11 +95,11 @@ func Register(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	// Check if username exists
 	exist, err := dataaccess.CheckUserExistByUsername(db, username)	
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.register"))
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.Register"))
     } 
 
 	if exist {
-		return &models.Result{
+		return &models.AuthResult{
 			Success: false,
 			Error: fmt.Sprintf("Username taken: %s", username),
 		}, nil
@@ -118,21 +110,18 @@ func Register(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 
 	res, err := dataaccess.InsertNewUser(db, username, t)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.register"))
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.Register"))
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.register"))
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.Register"))
 	}
 
-	user := &models.User{
-		ID: int(id), 
-		Username: username,
-		CreatedAt: t,
-	}
+	user.ID = int(id)
+	user.CreatedAt = t
 
-	return &models.Result{
+	return &models.AuthResult{
 		Success: true,
 		User: user,
 	}, nil

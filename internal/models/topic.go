@@ -9,3 +9,9 @@ type Topic struct {
     Name        string    `json:"name"` 
     CreatedAt   time.Time `json:"created_at"`
 }
+
+type TopicsResult struct {
+	Success bool `json:"success"`	
+	Error string `json:"error,omitempty"`
+	Topic *Topic `json:"topic,omitempty"`
+}

@@ -14,5 +14,10 @@ type Response struct {
 	Messages  []string `json:"messages"`
 	ErrorCode int      `json:"errorCode"`
 }
-
+const (
+	ErrRetrieveDatabase = "Failed to retrieve database in %s"
+	ErrGetFromRequest = "Invalid request in %s"
+	ErrDB = "Databse query failed in %s"
+)
+	
 

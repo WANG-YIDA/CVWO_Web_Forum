@@ -43,10 +43,10 @@ func GetRoutes() func(r chi.Router) {
 		})
 
 		// Topics Handlers
-		r.Post("/topics/:id", CreateRouteHandler(topics.HandleCreateTopic))
-		r.Post("/topics/:id", CreateRouteHandler(topics.HandleViewTopic))
-		r.Post("/topics/:id", CreateRouteHandler(topics.HandleEditTopic))
-		r.Post("/topics/:id", CreateRouteHandler(topics.HandleDeleteTopic))
+		r.Post("/topics/", CreateRouteHandler(topics.HandleCreateTopic))
+		r.Get("/topics/:id", CreateRouteHandler(topics.HandleViewTopic))
+		r.Patch("/topics/:id", CreateRouteHandler(topics.HandleEditTopic))
+		r.Delete("/topics/:id", CreateRouteHandler(topics.HandleDeleteTopic))
 
 		// Authentication Handlers
 		r.Post("/auth/login", CreateRouteHandler(auth.HandleLogin))
