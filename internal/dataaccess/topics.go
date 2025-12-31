@@ -10,7 +10,7 @@ import (
 func GetTopicByTopicID(db *sql.DB, topic_id int) (*models.Topic, error) {
 	query := `SELECT * FROM topics WHERE id = ?`
 	topic := &models.Topic{}
-	err := db.QueryRow(query, topic_id).Scan(&topic)
+	err := db.QueryRow(query, topic_id).Scan(&topic.ID, &topic.Description, &topic.UserID, &topic.Name, &topic.CreatedAt)
 	return topic, err 
 }
 
@@ -38,4 +38,10 @@ func UpdateTopicDescription(db *sql.DB, topic_id int, description string) (sql.R
 	query := `UPDATE topics SET description = ? WHERE id = ?`
 	res, err := db.Exec(query, description, topic_id)
 	return res, err
+}
+
+func DeleteTopicByTopicID(db *sql.DB, topic_id int) (sql.Result, error) {
+	query := `DELETE FROM topics WHERE id = ?`
+	res, err := db.Exec(query, topic_id)
+	return res, err	
 }

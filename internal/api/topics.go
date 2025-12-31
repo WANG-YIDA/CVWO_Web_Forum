@@ -18,11 +18,11 @@ import (
 
 const (
 	InvalidTopicName = "Invalid Topic Name: must consist of 3-16 alphannumeric characters, _ or -"
-	InvalidDescriptionPattern = `Invalid Description Pattern: must consist of 0-60 alphanumeric characters or any of .,!?'"()_-`
+	InvalidDescriptionPattern = `Invalid Description Pattern: must consist of 0-60 characters in a-zA-Z0-9 .,!?'"()_\-`
 )
 
 var validTopicNamePattern = regexp.MustCompile(`^[a-zA-Z0-9_-]{3,16}$`)
-var validTopicDescriptionPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_-]{0, 60}$`)
+var validTopicDescriptionPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{0,60}$`)
 
 func CreateTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	// Get DB
@@ -37,7 +37,7 @@ func CreateTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 
 	err = json.NewDecoder(r.Body).Decode(topic)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetNameFromRequest, "api.CreateTopic"))
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.CreateTopic"))
 	}
 
 	// Topic name validation
@@ -194,9 +194,53 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.DeleteTopic"))
 	}
 	defer db.Close()
+
 	// Get topic id from request 
-	id := chi.URLParam(r, "id")
+	topic_id_str := chi.URLParam(r, "id")
+	topic_id, err := strconv.Atoi(topic_id_str)
+    if err != nil {
+        return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.DeleteTopic"))
+	}
+
+	type Body struct {
+		UserID int `json:"user_id"`
+	}
+	var body Body
+
+	err = json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.DeleteTopic"))
+	}
+	userID := body.UserID
+
 	// Check if topic exists
+	topic, err := dataaccess.GetTopicByTopicID(db, topic_id)	
+	if err != nil {
+        if errors.Is(err, sql.ErrNoRows) {
+            return &models.TopicsResult{
+				Success: false,
+				Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
+			}, nil
+        }
+        return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteTopic"))
+    }	
+
 	// Access control
+	if userID != topic.UserID {
+		return &models.TopicsResult{
+				Success: false,
+				Error: fmt.Sprintf("User: %d does not have right to delete this topic: %d", userID, topic_id),
+			}, nil	
+	}
+
 	// Delete topic
+	res, err := dataaccess.DeleteTopicByTopicID(db, topic_id) 
+	rowsAffected, errRA := res.RowsAffected()
+	if err != nil || errRA != nil || rowsAffected != 1  {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteTopic"))
+	}
+
+	return &models.TopicsResult{
+		Success: true,
+	}, nil
 }
