@@ -195,7 +195,7 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}
 	defer db.Close()
 
-	// Get topic id from request 
+	// Get topic id, user id from request 
 	topic_id_str := chi.URLParam(r, "id")
 	topic_id, err := strconv.Atoi(topic_id_str)
     if err != nil {

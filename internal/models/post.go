@@ -10,3 +10,9 @@ type Post struct {
     Content   string    `json:"content"`
     CreatedAt time.Time `json:"created_at"`
 }
+
+type PostsResult struct {
+	Success bool `json:"success"`	
+	Error string `json:"error,omitempty"`
+	Post *Post `json:"topic,omitempty"`
+}
