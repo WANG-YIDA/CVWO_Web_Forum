@@ -10,8 +10,8 @@ import (
 func GetTopicByTopicID(db *sql.DB, topic_id int) (*models.Topic, error) {
 	query := `SELECT * FROM topics WHERE id = ?`
 	topic := &models.Topic{}
-	err := db.QueryRow(query, topic_id).Scan(&topic.ID, &topic.Description, &topic.UserID, &topic.Name, &topic.CreatedAt)
-	return topic, err 
+	err := db.QueryRow(query, topic_id).Scan(&topic.ID, &topic.Name, &topic.UserID, &topic.Description, &topic.CreatedAt)
+	return topic, err
 }
 
 func CheckTopicExistByTopicName(db *sql.DB, topic_name string) (bool, error) {

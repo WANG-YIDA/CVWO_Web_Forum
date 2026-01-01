@@ -59,7 +59,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 
 	exist, err := dataaccess.CheckTopicExistByTopicID(db, post.TopicID)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.EditPost"))	
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreatePost"))	
 	}
 
 	if !exist {
@@ -262,7 +262,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	if userID != post.UserID {
 		return &models.PostsResult{
 				Success: false,
-				Error: fmt.Sprintf("User: %d does not have right to delete this post: %d", userID, post_id),
+				Error: fmt.Sprintf("User: %d does not have right to delete post: %d", userID, post_id),
 			}, nil	
 	}
 

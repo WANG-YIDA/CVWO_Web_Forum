@@ -49,6 +49,14 @@ func CreateTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 		}, nil
 	}
 
+	valid = validTopicDescriptionPattern.MatchString(topic.Description)
+	if !valid {
+		return &models.TopicsResult{
+			Success: false,
+			Error: InvalidDescriptionPattern,
+		}, nil
+	}
+
 	// Check if topic exists
 	exist, err := dataaccess.CheckTopicExistByTopicName(db, topic.Name)	
 	if err != nil {
@@ -229,7 +237,7 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	if userID != topic.UserID {
 		return &models.TopicsResult{
 				Success: false,
-				Error: fmt.Sprintf("User: %d does not have right to delete this topic: %d", userID, topic_id),
+				Error: fmt.Sprintf("User: %d does not have right to delete topic: %d", userID, topic_id),
 			}, nil	
 	}
 

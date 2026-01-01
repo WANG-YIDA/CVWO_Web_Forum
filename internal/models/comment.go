@@ -9,3 +9,15 @@ type Comment struct {
     Content   string    `json:"content"`
     CreatedAt time.Time `json:"created_at"`
 }
+
+type CommentResult struct {
+	Success bool `json:"success"`	
+	Error string `json:"error,omitempty"`
+	Comment *Comment `json:"topic,omitempty"`
+}
+
+type CommentListResult struct {
+	Success bool `json:"success"`	
+	Error string `json:"error,omitempty"`
+	Comment *[]Comment `json:"topic,omitempty"`
+}
