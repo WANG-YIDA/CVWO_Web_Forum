@@ -38,6 +38,12 @@ func CreateComment(w http.ResponseWriter, r *http.Request) (interface{}, error) 
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.CreateComment"))
 	}
 
+	post_id_str := chi.URLParam(r, "post_id")
+	post_id, err := strconv.Atoi(post_id_str)
+    if err != nil {
+        return nil, errors.Wrap(err, fmt.Sprintf("Invalid post ID in %s", "api.CreateComment"))
+	}
+
 	// Comment content validation
 	valid := validCommentContentPattern.MatchString(comment.Content)
 	if !valid {
@@ -50,7 +56,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) (interface{}, error) 
 	// Create and insert a new comment 
 	t := time.Now()
 
-	res, err := dataaccess.InsertNewComment(db, comment.PostID, comment.UserID, comment.Content, t)
+	res, err := dataaccess.InsertNewComment(db, post_id, comment.UserID, comment.Content, t)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateComment"))
 	}
@@ -62,6 +68,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) (interface{}, error) 
 
 	comment.ID = int(id)	
 	comment.CreatedAt = t
+	comment.PostID = post_id
 
 	return &models.CommentResult{
 		Success: true,
@@ -78,7 +85,7 @@ func ViewComments(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	defer db.Close()
 	
 	// Get post id from request 
-	post_id_str := chi.URLParam(r, "id")
+	post_id_str := chi.URLParam(r, "post_id")
 	post_id, err := strconv.Atoi(post_id_str)
     if err != nil {
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid post ID in %s", "api.ViewComments"))
@@ -111,14 +118,19 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) (interface{}, error) 
 	defer db.Close()
 
 	// Get comment id, post id, user id from request 
-	comment_id_str := chi.URLParam(r, "id")
+	comment_id_str := chi.URLParam(r, "comment_id")
 	comment_id, err := strconv.Atoi(comment_id_str)
     if err != nil {
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid comment ID in %s", "api.DeleteComment"))
 	}
 
+	post_id_str := chi.URLParam(r, "post_id")
+	post_id, err := strconv.Atoi(post_id_str)
+    if err != nil {
+        return nil, errors.Wrap(err, fmt.Sprintf("Invalid post ID in %s", "api.DeleteComment"))
+	}
+
 	type Body struct {
-		PostID int `json:"post_id"`
 		UserID int `json:"user_id"`
 	}
 	var body Body
@@ -128,15 +140,14 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) (interface{}, error) 
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.DeleteComment"))
 	}
 	userID := body.UserID
-	postId := body.PostID
 
 	// Check if comment exists
-	comment, err := dataaccess.GetCommentByCommentIDAndPostID(db, comment_id, postId)	
+	comment, err := dataaccess.GetCommentByCommentIDAndPostID(db, comment_id, post_id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
             return &models.CommentResult{
 				Success: false,
-				Error: fmt.Sprintf("Comment in post: %d does not exist: %d", postId, comment_id),
+				Error: fmt.Sprintf("Comment in post: %d does not exist: %d", post_id, comment_id),
 			}, nil
         }
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteComment"))

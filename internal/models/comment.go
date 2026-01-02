@@ -13,11 +13,11 @@ type Comment struct {
 type CommentResult struct {
 	Success bool `json:"success"`	
 	Error string `json:"error,omitempty"`
-	Comment *Comment `json:"topic,omitempty"`
+	Comment *Comment `json:"comment,omitempty"`
 }
 
 type CommentListResult struct {
 	Success bool `json:"success"`	
 	Error string `json:"error,omitempty"`
-	Comment *[]Comment `json:"topic,omitempty"`
+	Comment *[]Comment `json:"comment,omitempty"`
 }

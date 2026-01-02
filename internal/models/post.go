@@ -14,5 +14,5 @@ type Post struct {
 type PostsResult struct {
 	Success bool `json:"success"`	
 	Error string `json:"error,omitempty"`
-	Post *Post `json:"topic,omitempty"`
+	Post *Post `json:"post,omitempty"`
 }

@@ -20,9 +20,9 @@ func InsertNewPost(db *sql.DB, title string, user_id int, topic_id int, content 
 	return res, err
 }
 
-func UpdatePost(db *sql.DB, post_id int, topic_id int, title string, content string) (sql.Result, error) {
-	query := `UPDATE posts SET topic_id = ?, title = ?, content = ? WHERE id = ?`
-	res, err := db.Exec(query, topic_id, title, content, post_id)
+func UpdatePost(db *sql.DB, post_id int, title string, content string) (sql.Result, error) {
+	query := `UPDATE posts SET title = ?, content = ? WHERE id = ?`
+	res, err := db.Exec(query, title, content, post_id)
 	return res, err
 }
 

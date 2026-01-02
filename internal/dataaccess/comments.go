@@ -8,7 +8,7 @@ import (
 )
 
 func GetCommentByCommentIDAndPostID(db *sql.DB, comment_id int, post_id int) (*models.Comment, error) {
-	query := `SELECT * FROM comments WHERE comment_id = ? AND post_id = ?`
+	query := `SELECT * FROM comments WHERE id = ? AND post_id = ?`
 	comment := &models.Comment{}
 	err := db.QueryRow(query, comment_id, post_id).Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt)
 	if err != nil {
