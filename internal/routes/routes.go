@@ -19,12 +19,11 @@ func CreateRouteHandler(handlerFunc func(http.ResponseWriter, *http.Request, *sq
         
         response, err := handlerFunc(w, req, db)
         if err != nil {
-            w.WriteHeader(http.StatusInternalServerError)
-            json.NewEncoder(w).Encode(map[string]interface{}{
-                "success": false,
-                "error":   err.Error(), 
-            })
-            return
+			response = &api.Response{
+				Payload: api.Payload{},
+				Success: false,
+				Error: err.Error(),
+			}
         }
         
         json.NewEncoder(w).Encode(response)

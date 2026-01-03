@@ -10,7 +10,7 @@ type Comment struct {
     CreatedAt time.Time `json:"created_at"`
 }
 
-type CommentResult struct {
+type CommentsResult struct {
 	Success bool `json:"success"`	
 	Error string `json:"error,omitempty"`
 	Comment *Comment `json:"comment,omitempty"`

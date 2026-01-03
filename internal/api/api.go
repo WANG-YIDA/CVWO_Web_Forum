@@ -11,8 +11,8 @@ type Payload struct {
 
 type Response struct {
 	Payload   Payload  `json:"payload"`
-	Messages  []string `json:"messages"`
-	ErrorCode int      `json:"errorCode"`
+	Success   bool     `json:"success,omitempty"`
+	Error     string   `json:"error,omitempty"`
 }
 const (
 	ErrRetrieveDatabase = "Failed to retrieve database"

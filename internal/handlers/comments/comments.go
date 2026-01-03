@@ -9,15 +9,15 @@ import (
 )
 
 func HandleCreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (*api.Response, error) {
-	return handlers.CreateAPIHandler(api.CreateComment, "topics.HandleCreateComment")(w, r, db)	
+	return handlers.CreateAPIHandler(api.CreateComment, "comments.HandleCreateComment")(w, r, db)	
 }
 
 func HandleViewComments(w http.ResponseWriter, r *http.Request, db *sql.DB) (*api.Response, error) {
-	return handlers.CreateAPIHandler(api.ViewComments, "topics.HandleViewComments")(w, r, db)	
+	return handlers.CreateAPIHandler(api.ViewComments, "comments.HandleViewComments")(w, r, db)	
 }
 
 func HandleDeleteComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (*api.Response, error) {
-	return handlers.CreateAPIHandler(api.DeleteComment, "topics.HandleDeleteComment")(w, r, db)
+	return handlers.CreateAPIHandler(api.DeleteComment, "comments.HandleDeleteComment")(w, r, db)
 }
 
 

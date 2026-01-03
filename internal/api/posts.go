@@ -133,7 +133,7 @@ func ViewPost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, 
 	exist, err := dataaccess.CheckTopicExistByTopicID(db, topic_id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError) 
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreatePost"))	
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewPost"))	
 	}
 
 	if !exist {

@@ -8,7 +8,7 @@ import (
 )
 
 func GetPostByPostIDAndTopicID(db *sql.DB, post_id int, topic_id int) (*models.Post, error) {
-	query := `SELECT * FROM posts WHERE id = ? AND topic_id = ?`
+	query := `SELECT id, user_id, topic_id, title, content, created_at FROM posts WHERE id = ? AND topic_id = ?`
 	post := &models.Post{}
 	err := db.QueryRow(query, post_id, topic_id).Scan(&post.ID, &post.UserID, &post.TopicID, &post.Title, &post.Content, &post.CreatedAt)
 	return post, err 

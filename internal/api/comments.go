@@ -54,7 +54,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
+		return &models.CommentsResult{
 			Success: false,
 			Error: fmt.Sprintf("User does not exist: %d", comment.UserID),
 		}, nil
@@ -68,7 +68,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
+		return &models.CommentsResult{
 			Success: false,
 			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
 		}, nil
@@ -82,7 +82,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
+		return &models.CommentsResult{
 			Success: false,
 			Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
 		}, nil
@@ -92,7 +92,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 	valid := validCommentContentPattern.MatchString(comment.Content)
 	if !valid {
 		w.WriteHeader(http.StatusBadRequest) 
-		return &models.CommentResult{
+		return &models.CommentsResult{
 			Success: false,
 			Error: InvalidCommentContent,
 		}, nil
@@ -117,7 +117,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 	comment.CreatedAt = t
 	comment.PostID = post_id
 
-	return &models.CommentResult{
+	return &models.CommentsResult{
 		Success: true,
 		Comment: comment,
 	}, nil
@@ -148,7 +148,7 @@ func ViewComments(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound) 
-		return &models.PostsResult{
+		return &models.CommentsResult{
 			Success: false,
 			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
 		}, nil
@@ -162,7 +162,7 @@ func ViewComments(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound) 
-		return &models.PostsResult{
+		return &models.CommentsResult{
 			Success: false,
 			Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
 		}, nil
@@ -231,7 +231,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
+		return &models.CommentsResult{
 			Success: false,
 			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
 		}, nil
@@ -245,7 +245,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
+		return &models.CommentsResult{
 			Success: false,
 			Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
 		}, nil
@@ -255,7 +255,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
 			w.WriteHeader(http.StatusNotFound)
-            return &models.CommentResult{
+            return &models.CommentsResult{
 				Success: false,
 				Error: fmt.Sprintf("Comment: %d in post: %d of topic: %d does not exist", comment_id, post_id, topic_id),
 			}, nil
@@ -267,7 +267,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 	// Access control
 	if userID != comment.UserID {
 		w.WriteHeader(http.StatusForbidden)
-		return &models.CommentResult {
+		return &models.CommentsResult {
 				Success: false,
 				Error: fmt.Sprintf("User: %d does not have right to delete comment: %d", userID, comment_id),
 			}, nil	
@@ -290,7 +290,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
     	return nil, errors.Errorf("api.DeleteComment: expected to delete 1 row, deleted %d", rows)
 	}
 
-	return &models.CommentResult{
+	return &models.CommentsResult{
 		Success: true,
 	}, nil
 }

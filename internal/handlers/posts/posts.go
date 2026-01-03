@@ -9,23 +9,23 @@ import (
 )
 
 func HandleCreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (*api.Response, error) {
-	return handlers.CreateAPIHandler(api.CreatePost, "topics.HandleCreatePost")(w, r, db)	
+	return handlers.CreateAPIHandler(api.CreatePost, "posts.HandleCreatePost")(w, r, db)	
 }
 
 func HandleViewPost(w http.ResponseWriter, r *http.Request, db *sql.DB) (*api.Response, error) {
-	return handlers.CreateAPIHandler(api.ViewPost, "topics.HandleViewPost")(w, r, db)	
+	return handlers.CreateAPIHandler(api.ViewPost, "posts.HandleViewPost")(w, r, db)	
 }
 
 func HandleViewPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) (*api.Response, error) {
-	return handlers.CreateAPIHandler(api.ViewPosts, "topics.HandleViewPosts")(w, r, db)	
+	return handlers.CreateAPIHandler(api.ViewPosts, "posts.HandleViewPosts")(w, r, db)	
 }
 
 func HandleEditPost(w http.ResponseWriter, r *http.Request, db *sql.DB) (*api.Response, error) {
-	return handlers.CreateAPIHandler(api.EditPost, "topics.HandleEditPost")(w, r, db)	
+	return handlers.CreateAPIHandler(api.EditPost, "posts.HandleEditPost")(w, r, db)	
 }
 
 func HandleDeletePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (*api.Response, error) {
-	return handlers.CreateAPIHandler(api.DeletePost, "topics.HandleDeletePost")(w, r, db)
+	return handlers.CreateAPIHandler(api.DeletePost, "posts.HandleDeletePost")(w, r, db)
 }
 
 
