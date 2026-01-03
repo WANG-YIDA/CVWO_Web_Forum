@@ -23,16 +23,17 @@ func Login(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, err
 	//Get username from request
 	user := &models.User{}	
 
-	var username string
 	err := json.NewDecoder(r.Body).Decode(user)
-	username = user.Username
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.Login"))
 	}
+	username := user.Username
 
 	// Validation
 	valid := validUsernamePattern.MatchString(username)
 	if !valid {
+		w.WriteHeader(http.StatusBadRequest)
 		return &models.AuthResult{
 			Success: false,
 			Error: InvalidUsername,
@@ -43,6 +44,7 @@ func Login(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, err
 	user, err = dataaccess.GetUserByUsername(db, username)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
+			w.WriteHeader(http.StatusNotFound)
             return &models.AuthResult{
 				Success: false,
 				Error: fmt.Sprintf("User does not exist: %s", username),
@@ -61,16 +63,17 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, 
 	//Get username from request
 	user := &models.User{}
 
-	var username string
 	err := json.NewDecoder(r.Body).Decode(user)
-	username = user.Username
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.Register"))
 	}
+	username := user.Username
 
 	// Validation
 	valid := validUsernamePattern.MatchString(username)
 	if !valid {
+		w.WriteHeader(http.StatusBadRequest)
 		return &models.AuthResult{
 			Success: false,
 			Error: InvalidUsername,
@@ -80,10 +83,12 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, 
 	// Check if username exists
 	exist, err := dataaccess.CheckUserExistByUsername(db, username)	
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.Register"))
     } 
 
 	if exist {
+		w.WriteHeader(http.StatusConflict)
 		return &models.AuthResult{
 			Success: false,
 			Error: fmt.Sprintf("Username taken: %s", username),
@@ -95,11 +100,13 @@ func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, 
 
 	res, err := dataaccess.InsertNewUser(db, username, t)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.Register"))
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.Register"))
 	}
 

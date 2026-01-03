@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/dataaccess"
-	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/database"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/models"
 	"github.com/go-chi/chi/v5"
 	"github.com/pkg/errors"
@@ -25,24 +24,19 @@ var validTopicNamePattern = regexp.MustCompile(`^[a-zA-Z0-9_-]{3,16}$`)
 var validTopicDescriptionPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{0,60}$`)
 
 func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
-	// Get DB
-	db, err := database.GetDB()
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.CreateTopic"))
-	}
-	defer db.Close()
-	
 	// Get topic name from request 
 	topic := &models.Topic{}
 
-	err = json.NewDecoder(r.Body).Decode(topic)
+	err := json.NewDecoder(r.Body).Decode(topic)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.CreateTopic"))
 	}
 
 	// Topic name validation
 	valid := validTopicNamePattern.MatchString(topic.Name)
 	if !valid {
+		w.WriteHeader(http.StatusBadRequest)
 		return &models.TopicsResult{
 			Success: false,
 			Error: InvalidTopicName,
@@ -51,6 +45,7 @@ func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 
 	valid = validTopicDescriptionPattern.MatchString(topic.Description)
 	if !valid {
+		w.WriteHeader(http.StatusBadRequest)
 		return &models.TopicsResult{
 			Success: false,
 			Error: InvalidDescriptionPattern,
@@ -60,10 +55,12 @@ func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 	// Check if topic, user exists
 	exist, err := dataaccess.CheckTopicExistByTopicName(db, topic.Name)	
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateTopic"))
     } 
 
 	if exist {
+		w.WriteHeader(http.StatusConflict)
 		return &models.TopicsResult{
 			Success: false,
 			Error: fmt.Sprintf("Topic name taken: %s", topic.Name),
@@ -72,10 +69,12 @@ func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 
 	exist, err = dataaccess.CheckUserExistByUserID(db, topic.UserID)	
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateTopic"))
     } 
 
 	if !exist {
+		w.WriteHeader(http.StatusNotFound)
 		return &models.TopicsResult{
 			Success: false,
 			Error: fmt.Sprintf("User does not exist: %d", topic.UserID),
@@ -87,11 +86,13 @@ func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 
 	res, err := dataaccess.InsertNewTopic(db, topic.Name, topic.UserID, topic.Description, t)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateTopic"))
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateTopic"))
 	}
 
@@ -105,17 +106,11 @@ func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 }
 
 func ViewTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
-	// Get DB
-	db, err := database.GetDB()
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.ViewTopic"))
-	}
-	defer db.Close()
-	
 	// Get topic id from request 
 	id_str := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(id_str)
     if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.ViewTopic"))
 	}
 
@@ -123,11 +118,13 @@ func ViewTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{},
 	topic, err := dataaccess.GetTopicByTopicID(db, id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
+			w.WriteHeader(http.StatusNotFound)
             return &models.TopicsResult{
 				Success: false,
 				Error: fmt.Sprintf("Topic does not exist: %d", id),
 			}, nil
         }
+		w.WriteHeader(http.StatusInternalServerError) 
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewTopic"))
     }	
 
@@ -138,13 +135,6 @@ func ViewTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{},
 }
 
 func ViewTopics(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
-	// Get DB
-	db, err := database.GetDB()
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.ViewTopics"))
-	}
-	defer db.Close()
-	
 	// Check if any topic exists
 	topics, err := dataaccess.GetTopics(db)	
 	if err != nil {
@@ -154,6 +144,7 @@ func ViewTopics(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}
 				Topics: nil,
 			}, nil
         }
+		w.WriteHeader(http.StatusInternalServerError) 
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewTopics"))
     }	
 
@@ -164,17 +155,11 @@ func ViewTopics(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}
 }
 
 func EditTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
-	// Get DB
-	db, err := database.GetDB()
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.EditTopic"))
-	}
-	defer db.Close()
-
 	// Get topic id, new description and user id from request 
 	topic_id_str := chi.URLParam(r, "id")
 	topic_id, err := strconv.Atoi(topic_id_str)
     if err != nil {
+		w.WriteHeader(http.StatusBadRequest) 
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.EditTopic"))
 	}
 
@@ -195,16 +180,19 @@ func EditTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{},
 	topic, err := dataaccess.GetTopicByTopicID(db, topic_id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
+			w.WriteHeader(http.StatusNotFound)
             return &models.TopicsResult{
 				Success: false,
 				Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
 			}, nil
         }
+		w.WriteHeader(http.StatusInternalServerError) 
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.EditTopic"))
     }	
 
 	// Access control
 	if userID != topic.UserID {
+		w.WriteHeader(http.StatusForbidden)
 		return &models.TopicsResult{
 				Success: false,
 				Error: fmt.Sprintf("User: %d does not have right to edit this topic: %d", userID, topic_id),
@@ -214,6 +202,7 @@ func EditTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{},
 	// Form inputs validation (only description is editable)
 	valid := validTopicDescriptionPattern.MatchString(description)
 	if !valid {
+		w.WriteHeader(http.StatusBadRequest) 
 		return &models.TopicsResult{
 			Success: false,
 			Error: InvalidDescriptionPattern,
@@ -224,6 +213,7 @@ func EditTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{},
 	topic.Description = description
 	_, err = dataaccess.UpdateTopicDescription(db, topic_id, description)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError) 
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.EditTopic"))	
 	}
 
@@ -234,17 +224,11 @@ func EditTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{},
 }
 
 func DeleteTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
-	// Get DB
-	db, err := database.GetDB()
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.DeleteTopic"))
-	}
-	defer db.Close()
-
 	// Get topic id, user id from request 
 	topic_id_str := chi.URLParam(r, "id")
 	topic_id, err := strconv.Atoi(topic_id_str)
     if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.DeleteTopic"))
 	}
 
@@ -255,6 +239,7 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 
 	err = json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.DeleteTopic"))
 	}
 	userID := body.UserID
@@ -263,16 +248,19 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 	topic, err := dataaccess.GetTopicByTopicID(db, topic_id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
+			w.WriteHeader(http.StatusNotFound)
             return &models.TopicsResult{
 				Success: false,
 				Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
 			}, nil
         }
+		w.WriteHeader(http.StatusInternalServerError) 
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteTopic"))
     }	
 
 	// Access control
 	if userID != topic.UserID {
+		w.WriteHeader(http.StatusForbidden)
 		return &models.TopicsResult{
 				Success: false,
 				Error: fmt.Sprintf("User: %d does not have right to delete topic: %d", userID, topic_id),
@@ -282,14 +270,17 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 	// Delete topic
 	res, err := dataaccess.DeleteTopicByTopicID(db, topic_id)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
     	return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteTopic"))
 	}
 
 	rows, errRA := res.RowsAffected()
 	if errRA != nil {
+		w.WriteHeader(http.StatusInternalServerError)
     	return nil, errors.Wrap(errRA, fmt.Sprintf(ErrDB, "api.DeleteTopic"))
 	}
 	if rows != 1 {
+		w.WriteHeader(http.StatusInternalServerError)
     	return nil, errors.Errorf("api.DeleteTopic: expected to delete 1 row, deleted %d", rows)
 	}
 

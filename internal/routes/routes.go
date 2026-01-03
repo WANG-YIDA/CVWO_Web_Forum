@@ -3,22 +3,18 @@ package routes
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/api"
-	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/database"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/auth"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/comments"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/posts"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/topics"
 	"github.com/go-chi/chi/v5"
-	"github.com/pkg/errors"
 )
 
 func CreateRouteHandler(handlerFunc func(http.ResponseWriter, *http.Request, *sql.DB) (*api.Response, error), db *sql.DB) http.HandlerFunc {
     return func(w http.ResponseWriter, req *http.Request) {
-        w.Header().Set("Access-Control-Allow-Origin", "*")
         w.Header().Set("Content-Type", "application/json")
         
         response, err := handlerFunc(w, req, db)
@@ -35,15 +31,22 @@ func CreateRouteHandler(handlerFunc func(http.ResponseWriter, *http.Request, *sq
     }
 }
 
-func GetRoutes() (func(r chi.Router), error) {
-	// Get DB
-	db, err := database.GetDB()
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprint(api.ErrRetrieveDatabase))
-	}
-	defer db.Close()
-	
+func GetRoutes(db *sql.DB) func(r chi.Router) {
 	return func(r chi.Router) {
+		// Middleware
+		r.Use(func(handler http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+				w.Header().Set("Access-Control-Allow-Origin", "*")
+				w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS")
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+				if req.Method == http.MethodOptions {
+					w.WriteHeader(http.StatusOK)
+					return
+				}
+				handler.ServeHTTP(w, req)
+			})
+		})
+
 		// For testing connection with frontend
 		r.Get("/handshake", func(w http.ResponseWriter, req *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*") 
@@ -77,5 +80,5 @@ func GetRoutes() (func(r chi.Router), error) {
 		// Authentication Handlers
 		r.Post("/auth/login", CreateRouteHandler(auth.HandleLogin, db))
 		r.Post("/auth/register", CreateRouteHandler(auth.HandleRegister, db))
-	}, nil
+	}
 }
