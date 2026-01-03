@@ -48,8 +48,8 @@ func InsertNewComment(db *sql.DB, post_id int, user_id int, content string, crea
 	return res, err
 }
 
-func DeleteCommentByCommentID(db *sql.DB, comment_id int) (sql.Result, error) {
-	query := `DELETE FROM comments WHERE id = ?`
-	res, err := db.Exec(query, comment_id)
+func DeleteCommentByCommentIDPostID(db *sql.DB, comment_id int, post_id int) (sql.Result, error) {
+	query := `DELETE FROM comments WHERE id = ? AND post_id = ?`
+	res, err := db.Exec(query, comment_id, post_id)
 	return res, err	
 }

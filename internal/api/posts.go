@@ -24,7 +24,7 @@ const (
 var validPostTitlePattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{3,50}$`)
 var validPostContentPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{1,500}$`)
 
-func CreatePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -111,7 +111,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}, nil
 }
 
-func ViewPost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+func ViewPost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -162,7 +162,7 @@ func ViewPost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}, nil
 }
 
-func ViewPosts(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+func ViewPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -208,7 +208,7 @@ func ViewPosts(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}, nil
 }
 
-func EditPost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+func EditPost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -307,7 +307,7 @@ func EditPost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}, nil
 }
 
-func DeletePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+func DeletePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -372,10 +372,17 @@ func DeletePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}
 
 	// Delete post
-	res, err := dataaccess.DeletePostByPostID(db, post_id) 
-	rowsAffected, errRA := res.RowsAffected()
-	if err != nil || errRA != nil || rowsAffected != 1  {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeletePost"))
+	res, err := dataaccess.DeletePostByPostIDTopicID(db, post_id, topic_id) 
+	if err != nil {
+    	return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeletePost"))
+	}
+
+	rows, errRA := res.RowsAffected()
+	if errRA != nil {
+    	return nil, errors.Wrap(errRA, fmt.Sprintf(ErrDB, "api.DeletePost"))
+	}
+	if rows != 1 {
+    	return nil, errors.Errorf("api.DeletePost: expected to delete 1 row, deleted %d", rows)
 	}
 
 	return &models.PostsResult{

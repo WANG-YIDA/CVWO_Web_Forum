@@ -58,8 +58,8 @@ func UpdatePost(db *sql.DB, post_id int, title string, content string) (sql.Resu
 	return res, err
 }
 
-func DeletePostByPostID(db *sql.DB, post_id int) (sql.Result, error) {
-	query := `DELETE FROM posts WHERE id = ?`
-	res, err := db.Exec(query, post_id)
+func DeletePostByPostIDTopicID(db *sql.DB, post_id int, topic_id int) (sql.Result, error) {
+	query := `DELETE FROM posts WHERE id = ? AND topic_id = ?`
+	res, err := db.Exec(query, post_id, topic_id)
 	return res, err	
 }

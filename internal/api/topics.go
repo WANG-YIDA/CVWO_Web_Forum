@@ -24,7 +24,7 @@ const (
 var validTopicNamePattern = regexp.MustCompile(`^[a-zA-Z0-9_-]{3,16}$`)
 var validTopicDescriptionPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{0,60}$`)
 
-func CreateTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -104,7 +104,7 @@ func CreateTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}, nil
 }
 
-func ViewTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+func ViewTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -137,7 +137,7 @@ func ViewTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}, nil
 }
 
-func ViewTopics(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+func ViewTopics(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -163,7 +163,7 @@ func ViewTopics(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}, nil
 }
 
-func EditTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+func EditTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -233,7 +233,7 @@ func EditTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}, nil
 }
 
-func DeleteTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+func DeleteTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -280,10 +280,17 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}
 
 	// Delete topic
-	res, err := dataaccess.DeleteTopicByTopicID(db, topic_id) 
-	rowsAffected, errRA := res.RowsAffected()
-	if err != nil || errRA != nil || rowsAffected != 1  {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteTopic"))
+	res, err := dataaccess.DeleteTopicByTopicID(db, topic_id)
+	if err != nil {
+    	return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteTopic"))
+	}
+
+	rows, errRA := res.RowsAffected()
+	if errRA != nil {
+    	return nil, errors.Wrap(errRA, fmt.Sprintf(ErrDB, "api.DeleteTopic"))
+	}
+	if rows != 1 {
+    	return nil, errors.Errorf("api.DeleteTopic: expected to delete 1 row, deleted %d", rows)
 	}
 
 	return &models.TopicsResult{

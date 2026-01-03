@@ -1,23 +1,27 @@
 package routes
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/api"
+	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/database"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/auth"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/comments"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/posts"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/topics"
 	"github.com/go-chi/chi/v5"
+	"github.com/pkg/errors"
 )
 
-func CreateRouteHandler(handlerFunc func(http.ResponseWriter, *http.Request) (*api.Response, error)) http.HandlerFunc {
+func CreateRouteHandler(handlerFunc func(http.ResponseWriter, *http.Request, *sql.DB) (*api.Response, error), db *sql.DB) http.HandlerFunc {
     return func(w http.ResponseWriter, req *http.Request) {
         w.Header().Set("Access-Control-Allow-Origin", "*")
         w.Header().Set("Content-Type", "application/json")
         
-        response, err := handlerFunc(w, req)
+        response, err := handlerFunc(w, req, db)
         if err != nil {
             w.WriteHeader(http.StatusInternalServerError)
             json.NewEncoder(w).Encode(map[string]interface{}{
@@ -31,7 +35,14 @@ func CreateRouteHandler(handlerFunc func(http.ResponseWriter, *http.Request) (*a
     }
 }
 
-func GetRoutes() func(r chi.Router) {
+func GetRoutes() (func(r chi.Router), error) {
+	// Get DB
+	db, err := database.GetDB()
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprint(api.ErrRetrieveDatabase))
+	}
+	defer db.Close()
+	
 	return func(r chi.Router) {
 		// For testing connection with frontend
 		r.Get("/handshake", func(w http.ResponseWriter, req *http.Request) {
@@ -45,26 +56,26 @@ func GetRoutes() func(r chi.Router) {
 		})
 
 		// Topics Handlers
-		r.Post("/topics", CreateRouteHandler(topics.HandleCreateTopic))
-		r.Get("/topics/{id}", CreateRouteHandler(topics.HandleViewTopic))
-		r.Get("/topics", CreateRouteHandler(topics.HandleViewTopics))
-		r.Patch("/topics/{id}", CreateRouteHandler(topics.HandleEditTopic))
-		r.Delete("/topics/{id}", CreateRouteHandler(topics.HandleDeleteTopic))
+		r.Post("/topics", CreateRouteHandler(topics.HandleCreateTopic, db))
+		r.Get("/topics/{id}", CreateRouteHandler(topics.HandleViewTopic, db))
+		r.Get("/topics", CreateRouteHandler(topics.HandleViewTopics, db))
+		r.Patch("/topics/{id}", CreateRouteHandler(topics.HandleEditTopic, db))
+		r.Delete("/topics/{id}", CreateRouteHandler(topics.HandleDeleteTopic, db))
 
 		// Posts Handlers
-		r.Post("/topics/{topic_id}/posts", CreateRouteHandler(posts.HandleCreatePost))
-		r.Get("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleViewPost))
-		r.Get("/topics/{topic_id}/posts", CreateRouteHandler(posts.HandleViewPosts))
-		r.Patch("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleEditPost))
-		r.Delete("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleDeletePost))
+		r.Post("/topics/{topic_id}/posts", CreateRouteHandler(posts.HandleCreatePost, db))
+		r.Get("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleViewPost, db))
+		r.Get("/topics/{topic_id}/posts", CreateRouteHandler(posts.HandleViewPosts, db))
+		r.Patch("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleEditPost, db))
+		r.Delete("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleDeletePost, db))
 
 		// Comments Handlers
-		r.Post("/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleCreateComment))
-		r.Get("/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleViewComments))
-		r.Delete("/topics/{topic_id}/posts/{post_id}/comments/{comment_id}", CreateRouteHandler(comments.HandleDeleteComment))
+		r.Post("/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleCreateComment, db))
+		r.Get("/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleViewComments, db))
+		r.Delete("/topics/{topic_id}/posts/{post_id}/comments/{comment_id}", CreateRouteHandler(comments.HandleDeleteComment, db))
 
 		// Authentication Handlers
-		r.Post("/auth/login", CreateRouteHandler(auth.HandleLogin))
-		r.Post("/auth/register", CreateRouteHandler(auth.HandleRegister))
-	}
+		r.Post("/auth/login", CreateRouteHandler(auth.HandleLogin, db))
+		r.Post("/auth/register", CreateRouteHandler(auth.HandleRegister, db))
+	}, nil
 }

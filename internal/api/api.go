@@ -15,7 +15,7 @@ type Response struct {
 	ErrorCode int      `json:"errorCode"`
 }
 const (
-	ErrRetrieveDatabase = "Failed to retrieve database in %s"
+	ErrRetrieveDatabase = "Failed to retrieve database"
 	ErrGetFromRequest = "Invalid request in %s"
 	ErrDB = "Database query failed in %s"
 )

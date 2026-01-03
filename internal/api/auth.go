@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/dataaccess"
-	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/database"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/models"
 	"github.com/pkg/errors"
 )
@@ -20,19 +19,12 @@ const (
 
 var validUsernamePattern = regexp.MustCompile("^[a-zA-Z0-9_-]{3,16}$")
 
-func Login(w http.ResponseWriter, r *http.Request) (interface{}, error) {
-	// Get DB
-	db, err := database.GetDB()
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.Login"))
-	}
-	defer db.Close()
-
+func Login(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	//Get username from request
 	user := &models.User{}	
 
 	var username string
-	err = json.NewDecoder(r.Body).Decode(user)
+	err := json.NewDecoder(r.Body).Decode(user)
 	username = user.Username
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.Login"))
@@ -65,19 +57,12 @@ func Login(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}, nil
 }
 
-func Register(w http.ResponseWriter, r *http.Request) (interface{}, error) {
-	// Get DB
-	db, err := database.GetDB()
-	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.Register"))
-	}
-	defer db.Close()
-
+func Register(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	//Get username from request
 	user := &models.User{}
 
 	var username string
-	err = json.NewDecoder(r.Body).Decode(user)
+	err := json.NewDecoder(r.Body).Decode(user)
 	username = user.Username
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrGetFromRequest, "api.Register"))

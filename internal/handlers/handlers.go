@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,11 +15,11 @@ const (
 )
 
 func CreateAPIHandler(
-	apiFunc func(http.ResponseWriter, *http.Request) (interface{}, error),
+	apiFunc func(http.ResponseWriter, *http.Request, *sql.DB) (interface{}, error),
 	handlerName string,
-) func(http.ResponseWriter, *http.Request) (*api.Response, error) {
-	return func(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
-		result, err := apiFunc(w, r)
+) func(http.ResponseWriter, *http.Request, *sql.DB) (*api.Response, error) {
+	return func(w http.ResponseWriter, r *http.Request, db *sql.DB) (*api.Response, error) {
+		result, err := apiFunc(w, r, db)
 		if err != nil {
 			return nil, err
 		}

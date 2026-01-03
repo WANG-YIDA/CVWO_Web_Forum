@@ -5,12 +5,23 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func Setup() chi.Router {
+func Setup() (chi.Router, error) {
 	r := chi.NewRouter()
-	setUpRoutes(r)
-	return r
+
+	err := setUpRoutes(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
 }
 
-func setUpRoutes(r chi.Router) {
-	r.Group(routes.GetRoutes())
+func setUpRoutes(r chi.Router) error {
+	routes, err := routes.GetRoutes()
+	if err != nil {
+		return err
+	}
+
+	r.Group(routes)
+	return nil
 }
