@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	InvalidTopicName = "Invalid Topic Name: must consist of 3-16 alphannumeric characters, _ or -"
+	InvalidTopicName = "Invalid Topic Name: must consist of 3-16 alphannumeric characters, _ or - (without spacing)"
 	InvalidDescriptionPattern = `Invalid Description Pattern: must consist of 0-60 characters in a-zA-Z0-9 .,!?'"()_\-`
 )
 
