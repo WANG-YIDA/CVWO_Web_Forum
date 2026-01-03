@@ -16,3 +16,9 @@ type PostsResult struct {
 	Error string `json:"error,omitempty"`
 	Post *Post `json:"post,omitempty"`
 }
+
+type PostListResult struct {
+	Success bool `json:"success"`	
+	Error string `json:"error,omitempty"`
+	Posts *[]Post `json:"posts,omitempty"`
+}

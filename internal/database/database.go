@@ -32,7 +32,7 @@ func createTables(db *sql.DB) {
 		content TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY(user_id) REFERENCES users(id),
-		FOREIGN KEY(topic_id) REFERENCES topics(id)
+		FOREIGN KEY(topic_id) REFERENCES topics(id) ON DELETE CASCADE
 	);
 
 	CREATE TABLE IF NOT EXISTS comments (
@@ -41,7 +41,7 @@ func createTables(db *sql.DB) {
 		user_id INTEGER NOT NULL,
 		content TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		FOREIGN KEY(post_id) REFERENCES posts(id),
+		FOREIGN KEY(post_id) REFERENCES posts(id) ON DELETE CASCADE,
 		FOREIGN KEY(user_id) REFERENCES users(id)
 	);
 	`
@@ -56,6 +56,10 @@ func createTables(db *sql.DB) {
 func GetDB() (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", "cmd/server/forum.db")
 	if err != nil {
+		return nil, err
+	}
+
+	if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
 		return nil, err
 	}
 	

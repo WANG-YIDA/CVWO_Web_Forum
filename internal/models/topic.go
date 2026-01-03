@@ -15,3 +15,9 @@ type TopicsResult struct {
 	Error string `json:"error,omitempty"`
 	Topic *Topic `json:"topic,omitempty"`
 }
+
+type TopicListResult struct {
+	Success bool `json:"success"`	
+	Error string `json:"error,omitempty"`
+	Topics *[]Topic `json:"topics,omitempty"`
+}

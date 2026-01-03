@@ -7,11 +7,43 @@ import (
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/models"
 )
 
-func GetPostByPostID(db *sql.DB, post_id int) (*models.Post, error) {
-	query := `SELECT * FROM posts WHERE id = ?`
+func GetPostByPostIDAndTopicID(db *sql.DB, post_id int, topic_id int) (*models.Post, error) {
+	query := `SELECT * FROM posts WHERE id = ? AND topic_id = ?`
 	post := &models.Post{}
-	err := db.QueryRow(query, post_id).Scan(&post.ID, &post.UserID, &post.TopicID, &post.Title, &post.Content, &post.CreatedAt)
+	err := db.QueryRow(query, post_id, topic_id).Scan(&post.ID, &post.UserID, &post.TopicID, &post.Title, &post.Content, &post.CreatedAt)
 	return post, err 
+}
+
+func GetPostsByTopicID(db *sql.DB, topic_id int) (*[]models.Post, error) {
+	query := `SELECT id, title, user_id, topic_id, content, created_at FROM posts WHERE topic_id = ?`
+	rows, err := db.Query(query, topic_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := []models.Post{}
+
+	for rows.Next() {
+		post := models.Post{}
+		err := rows.Scan(&post.ID, &post.Title, &post.UserID, &post.TopicID, &post.Content, &post.CreatedAt)
+		if err != nil {
+            return nil, err
+        }
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+        return nil, err
+    }
+	return &posts, err 
+}
+
+func CheckPostExistByPostIDTopicID(db *sql.DB, post_id int, topic_id int) (bool, error) {
+	var exist bool
+	query := `SELECT EXISTS(SELECT 1 FROM posts WHERE id = ? AND topic_id = ?)`
+	err := db.QueryRow(query, post_id, topic_id).Scan(&exist)
+	return exist, err
 }
 
 func InsertNewPost(db *sql.DB, title string, user_id int, topic_id int, content string, created_at time.Time) (sql.Result, error) {

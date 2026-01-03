@@ -11,8 +11,8 @@ func HandleCreateComment(w http.ResponseWriter, r *http.Request) (*api.Response,
 	return handlers.CreateAPIHandler(api.CreateComment, "topics.HandleCreateComment")(w, r)	
 }
 
-func HandleViewComment(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
-	return handlers.CreateAPIHandler(api.ViewComments, "topics.HandleViewComment")(w, r)	
+func HandleViewComments(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
+	return handlers.CreateAPIHandler(api.ViewComments, "topics.HandleViewComments")(w, r)	
 }
 
 func HandleDeleteComment(w http.ResponseWriter, r *http.Request) (*api.Response, error) {

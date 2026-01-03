@@ -14,6 +14,32 @@ func GetTopicByTopicID(db *sql.DB, topic_id int) (*models.Topic, error) {
 	return topic, err
 }
 
+
+func GetTopics(db *sql.DB) (*[]models.Topic, error) {
+	query := `SELECT id, name, user_id, description, created_at FROM topics`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	topics := []models.Topic{}
+
+	for rows.Next() {
+		topic := models.Topic{}
+		err := rows.Scan(&topic.ID, &topic.Name, &topic.UserID, &topic.Description, &topic.CreatedAt)
+		if err != nil {
+            return nil, err
+        }
+		topics = append(topics, topic)
+	}
+
+	if err = rows.Err(); err != nil {
+        return nil, err
+    }
+	return &topics, err 
+}
+
 func CheckTopicExistByTopicName(db *sql.DB, topic_name string) (bool, error) {
 	var exist bool
 	query := `SELECT EXISTS(SELECT 1 FROM topics WHERE name = ?)`

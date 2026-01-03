@@ -30,7 +30,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) (interface{}, error) 
 	}
 	defer db.Close()
 	
-	// Get comment post id, user id, content from request 
+	// Get comment topic id, post id, user id, content from request 
 	comment := &models.Comment{}
 
 	err = json.NewDecoder(r.Body).Decode(comment)
@@ -42,6 +42,49 @@ func CreateComment(w http.ResponseWriter, r *http.Request) (interface{}, error) 
 	post_id, err := strconv.Atoi(post_id_str)
     if err != nil {
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid post ID in %s", "api.CreateComment"))
+	}
+
+	topic_id_str := chi.URLParam(r, "topic_id")
+	topic_id, err := strconv.Atoi(topic_id_str)
+    if err != nil {
+        return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.CreateComment"))
+	}
+
+	// Check if post, topic, user exist	
+	exist, err := dataaccess.CheckUserExistByUserID(db, comment.UserID)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateComment"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("User does not exist: %d", comment.UserID),
+		}, nil
+	}
+
+	exist, err = dataaccess.CheckTopicExistByTopicID(db, topic_id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateComment"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
+		}, nil
+	}
+
+	exist, err = dataaccess.CheckPostExistByPostIDTopicID(db, post_id, topic_id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateComment"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
+		}, nil
 	}
 
 	// Comment content validation
@@ -84,11 +127,42 @@ func ViewComments(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}
 	defer db.Close()
 	
-	// Get post id from request 
+	// Get post id, topic id from request 
 	post_id_str := chi.URLParam(r, "post_id")
 	post_id, err := strconv.Atoi(post_id_str)
     if err != nil {
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid post ID in %s", "api.ViewComments"))
+	}
+
+	topic_id_str := chi.URLParam(r, "topic_id")
+	topic_id, err := strconv.Atoi(topic_id_str)
+    if err != nil {
+        return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.ViewComments"))
+	}
+
+	// Check if topic, post exist
+	exist, err := dataaccess.CheckTopicExistByTopicID(db, topic_id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewComments"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
+		}, nil
+	}
+
+	exist, err = dataaccess.CheckPostExistByPostIDTopicID(db, post_id, topic_id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewComments"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
+		}, nil
 	}
 
 	// Check if any comment exists
@@ -97,7 +171,7 @@ func ViewComments(w http.ResponseWriter, r *http.Request) (interface{}, error) {
         if errors.Is(err, sql.ErrNoRows) {
             return &models.CommentListResult{
 				Success: true,
-				Comment: nil,
+				Comments: nil,
 			}, nil
         }
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewComments"))
@@ -105,7 +179,7 @@ func ViewComments(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 
 	return &models.CommentListResult{
 		Success: true,
-		Comment: comments,
+		Comments: comments,
 	}, nil
 }
 
@@ -117,7 +191,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) (interface{}, error) 
 	}
 	defer db.Close()
 
-	// Get comment id, post id, user id from request 
+	// Get comment id, topic id, post id, user id from request 
 	comment_id_str := chi.URLParam(r, "comment_id")
 	comment_id, err := strconv.Atoi(comment_id_str)
     if err != nil {
@@ -128,6 +202,12 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) (interface{}, error) 
 	post_id, err := strconv.Atoi(post_id_str)
     if err != nil {
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid post ID in %s", "api.DeleteComment"))
+	}
+
+	topic_id_str := chi.URLParam(r, "topic_id")
+	topic_id, err := strconv.Atoi(topic_id_str)
+    if err != nil {
+        return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.DeleteComment"))
 	}
 
 	type Body struct {
@@ -141,13 +221,37 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) (interface{}, error) 
 	}
 	userID := body.UserID
 
-	// Check if comment exists
+	// Check if topic, post, comment exist
+	exist, err := dataaccess.CheckTopicExistByTopicID(db, topic_id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteComment"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
+		}, nil
+	}
+
+	exist, err = dataaccess.CheckPostExistByPostIDTopicID(db, post_id, topic_id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteComment"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
+		}, nil
+	}
+
 	comment, err := dataaccess.GetCommentByCommentIDAndPostID(db, comment_id, post_id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
             return &models.CommentResult{
 				Success: false,
-				Error: fmt.Sprintf("Comment in post: %d does not exist: %d", post_id, comment_id),
+				Error: fmt.Sprintf("Comment: %d in post: %d of topic: %d does not exist", comment_id, post_id, topic_id),
 			}, nil
         }
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteComment"))

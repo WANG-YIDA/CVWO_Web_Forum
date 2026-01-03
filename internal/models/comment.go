@@ -19,5 +19,5 @@ type CommentResult struct {
 type CommentListResult struct {
 	Success bool `json:"success"`	
 	Error string `json:"error,omitempty"`
-	Comment *[]Comment `json:"comment,omitempty"`
+	Comments *[]Comment `json:"comments,omitempty"`
 }

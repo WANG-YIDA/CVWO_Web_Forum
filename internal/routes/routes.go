@@ -47,18 +47,20 @@ func GetRoutes() func(r chi.Router) {
 		// Topics Handlers
 		r.Post("/topics", CreateRouteHandler(topics.HandleCreateTopic))
 		r.Get("/topics/{id}", CreateRouteHandler(topics.HandleViewTopic))
+		r.Get("/topics", CreateRouteHandler(topics.HandleViewTopics))
 		r.Patch("/topics/{id}", CreateRouteHandler(topics.HandleEditTopic))
 		r.Delete("/topics/{id}", CreateRouteHandler(topics.HandleDeleteTopic))
 
 		// Posts Handlers
 		r.Post("/topics/{topic_id}/posts", CreateRouteHandler(posts.HandleCreatePost))
 		r.Get("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleViewPost))
+		r.Get("/topics/{topic_id}/posts", CreateRouteHandler(posts.HandleViewPosts))
 		r.Patch("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleEditPost))
 		r.Delete("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleDeletePost))
 
 		// Comments Handlers
 		r.Post("/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleCreateComment))
-		r.Get("/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleViewComment))
+		r.Get("/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleViewComments))
 		r.Delete("/topics/{topic_id}/posts/{post_id}/comments/{comment_id}", CreateRouteHandler(comments.HandleDeleteComment))
 
 		// Authentication Handlers

@@ -46,7 +46,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 		return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.CreatePost"))
 	}
 
-	// Post title, content, topic validation
+	// Post title, content, topic, user validation
 	valid := validPostTitlePattern.MatchString(post.Title)
 	if !valid {
 		return &models.PostsResult{
@@ -63,6 +63,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 		}, nil
 	}
 
+	// Check if topic, user exist
 	exist, err := dataaccess.CheckTopicExistByTopicID(db, topic_id)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreatePost"))	
@@ -72,6 +73,18 @@ func CreatePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 		return &models.PostsResult{
 			Success: false,
 			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
+		}, nil
+	}
+
+	exist, err = dataaccess.CheckUserExistByUserID(db, post.UserID)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreatePost"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("User does not exist: %d", post.UserID),
 		}, nil
 	}
 
@@ -106,20 +119,38 @@ func ViewPost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}
 	defer db.Close()
 	
-	// Get post id from request 
+	// Get post id, topic id from request 
 	post_id_str := chi.URLParam(r, "post_id")
 	post_id, err := strconv.Atoi(post_id_str)
     if err != nil {
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid post ID in %s", "api.ViewPost"))
 	}
 
-	// Check if post exists
-	post, err := dataaccess.GetPostByPostID(db, post_id)	
+	topic_id_str := chi.URLParam(r, "topic_id")
+	topic_id, err := strconv.Atoi(topic_id_str)
+    if err != nil {
+        return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.ViewPost"))
+	}
+
+	// Check if topic, post exist
+	exist, err := dataaccess.CheckTopicExistByTopicID(db, topic_id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreatePost"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
+		}, nil
+	}
+
+	post, err := dataaccess.GetPostByPostIDAndTopicID(db, post_id, topic_id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
             return &models.PostsResult{
 				Success: false,
-				Error: fmt.Sprintf("Post does not exist: %d", post_id),
+				Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
 			}, nil
         }
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewPost"))
@@ -128,6 +159,52 @@ func ViewPost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	return &models.PostsResult{
 		Success: true,
 		Post: post,
+	}, nil
+}
+
+func ViewPosts(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+	// Get DB
+	db, err := database.GetDB()
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.ViewPosts"))
+	}
+	defer db.Close()
+	
+	// Get topic id from request 
+	topic_id_str := chi.URLParam(r, "topic_id")
+	topic_id, err := strconv.Atoi(topic_id_str)
+    if err != nil {
+        return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.ViewPosts"))
+	}
+
+	// Check if topic exists
+	exist, err := dataaccess.CheckTopicExistByTopicID(db, topic_id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewPosts"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
+		}, nil
+	}
+
+	// Check if any post exists
+	posts, err := dataaccess.GetPostsByTopicID(db, topic_id)	
+	if err != nil {
+        if errors.Is(err, sql.ErrNoRows) {
+            return &models.PostListResult{
+				Success: true,
+				Posts: nil,
+			}, nil
+        }
+        return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewPosts"))
+    }	
+
+	return &models.PostListResult{
+		Success: true,
+		Posts: posts,
 	}, nil
 }
 
@@ -146,6 +223,12 @@ func EditPost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid post ID in %s", "api.EditPost"))
 	}
 
+	topic_id_str := chi.URLParam(r, "topic_id")
+	topic_id, err := strconv.Atoi(topic_id_str)
+    if err != nil {
+        return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.EditPost"))
+	}
+
 	type Body struct {
 		UserID int `json:"user_id"`
 		Title string `json:"title"`
@@ -161,13 +244,25 @@ func EditPost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	title := body.Title
 	content := body.Content
 
-	// Check if post exists
-	post, err := dataaccess.GetPostByPostID(db, post_id)	
+	/// Check if topic, post exist
+	exist, err := dataaccess.CheckTopicExistByTopicID(db, topic_id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.EditPost"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
+		}, nil
+	}
+
+	post, err := dataaccess.GetPostByPostIDAndTopicID(db, post_id, topic_id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
             return &models.PostsResult{
 				Success: false,
-				Error: fmt.Sprintf("Post does not exist: %d", post_id),
+				Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
 			}, nil
         }
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.EditPost"))
@@ -220,11 +315,17 @@ func DeletePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}
 	defer db.Close()
 
-	// Get post id, user id from request 
+	// Get post id, topic id, user id from request 
 	post_id_str := chi.URLParam(r, "post_id")
 	post_id, err := strconv.Atoi(post_id_str)
     if err != nil {
         return nil, errors.Wrap(err, fmt.Sprintf("Invalid post ID in %s", "api.DeletePost"))
+	}
+
+	topic_id_str := chi.URLParam(r, "topic_id")
+	topic_id, err := strconv.Atoi(topic_id_str)
+    if err != nil {
+        return nil, errors.Wrap(err, fmt.Sprintf("Invalid topic ID in %s", "api.DeletePost"))
 	}
 
 	type Body struct {
@@ -238,13 +339,25 @@ func DeletePost(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	}
 	userID := body.UserID
 
-	// Check if post exists
-	post, err := dataaccess.GetPostByPostID(db, post_id)	
+	// Check if topic, post exists
+	exist, err := dataaccess.CheckTopicExistByTopicID(db, topic_id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeletePost"))	
+	}
+
+	if !exist {
+		return &models.PostsResult{
+			Success: false,
+			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
+		}, nil
+	}
+
+	post, err := dataaccess.GetPostByPostIDAndTopicID(db, post_id, topic_id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
             return &models.PostsResult{
 				Success: false,
-				Error: fmt.Sprintf("Post does not exist: %d", post_id),
+				Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
 			}, nil
         }
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeletePost"))

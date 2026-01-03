@@ -57,7 +57,7 @@ func CreateTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 		}, nil
 	}
 
-	// Check if topic exists
+	// Check if topic, user exists
 	exist, err := dataaccess.CheckTopicExistByTopicName(db, topic.Name)	
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateTopic"))
@@ -67,6 +67,18 @@ func CreateTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 		return &models.TopicsResult{
 			Success: false,
 			Error: fmt.Sprintf("Topic name taken: %s", topic.Name),
+		}, nil
+	}
+
+	exist, err = dataaccess.CheckUserExistByUserID(db, topic.UserID)	
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateTopic"))
+    } 
+
+	if !exist {
+		return &models.TopicsResult{
+			Success: false,
+			Error: fmt.Sprintf("User does not exist: %d", topic.UserID),
 		}, nil
 	}
 
@@ -122,6 +134,32 @@ func ViewTopic(w http.ResponseWriter, r *http.Request) (interface{}, error) {
 	return &models.TopicsResult{
 		Success: true,
 		Topic: topic,
+	}, nil
+}
+
+func ViewTopics(w http.ResponseWriter, r *http.Request) (interface{}, error) {
+	// Get DB
+	db, err := database.GetDB()
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, "api.ViewTopics"))
+	}
+	defer db.Close()
+	
+	// Check if any topic exists
+	topics, err := dataaccess.GetTopics(db)	
+	if err != nil {
+        if errors.Is(err, sql.ErrNoRows) {
+            return &models.TopicListResult{
+				Success: true,
+				Topics: nil,
+			}, nil
+        }
+        return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewTopics"))
+    }	
+
+	return &models.TopicListResult{
+		Success: true,
+		Topics: topics,
 	}, nil
 }
 

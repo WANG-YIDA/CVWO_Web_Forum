@@ -17,7 +17,7 @@ type Response struct {
 const (
 	ErrRetrieveDatabase = "Failed to retrieve database in %s"
 	ErrGetFromRequest = "Invalid request in %s"
-	ErrDB = "Databse query failed in %s"
+	ErrDB = "Database query failed in %s"
 )
 	
 

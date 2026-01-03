@@ -21,6 +21,13 @@ func CheckUserExistByUsername(db *sql.DB, username string) (bool, error) {
 	return exist, err
 }
 
+func CheckUserExistByUserID(db *sql.DB, user_id int) (bool, error) {
+	var exist bool
+	query := `SELECT EXISTS(SELECT 1 FROM users WHERE id = ?)`
+	err := db.QueryRow(query, user_id).Scan(&exist)
+	return exist, err
+}
+
 func InsertNewUser(db *sql.DB, username string, created_at time.Time) (sql.Result, error) {
 	query := `INSERT INTO users (username, created_at) VALUES (?, ?)`
 	res, err := db.Exec(query, username, created_at)

@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	ErrEncodeView              = "Failed to encode data in %s"
+	ErrEncodeView = "Failed to encode data in %s"
 )
 
 func CreateAPIHandler(

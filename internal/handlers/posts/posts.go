@@ -15,6 +15,10 @@ func HandleViewPost(w http.ResponseWriter, r *http.Request) (*api.Response, erro
 	return handlers.CreateAPIHandler(api.ViewPost, "topics.HandleViewPost")(w, r)	
 }
 
+func HandleViewPosts(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
+	return handlers.CreateAPIHandler(api.ViewPosts, "topics.HandleViewPosts")(w, r)	
+}
+
 func HandleEditPost(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
 	return handlers.CreateAPIHandler(api.EditPost, "topics.HandleEditPost")(w, r)	
 }
