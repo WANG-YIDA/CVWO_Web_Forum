@@ -5,7 +5,7 @@ import Typewriter from "typewriter-effect";
 
 import React, { useState } from "react";
 
-const BasicThreadView: React.FC = () => {
+const BasicPostView: React.FC = () => {
     const [isShowButton, setIsShowButton] = useState(false);
 
     const hideButton = () => {
@@ -19,9 +19,9 @@ const BasicThreadView: React.FC = () => {
     return (
         <div style={{ width: "25vw", margin: "auto", textAlign: "center" }}>
             <h3>{"Inspirational Quotes"}</h3>
-            <h4>{"Thread started by Aiken"}</h4>
+            <h4>{"Post started by Aiken"}</h4>
             <BasicCommentList styled={false} />
-            <Link to="/">{`<- Back to threads`}</Link>
+            <Link to="/">{`<- Back to posts`}</Link>
             <br />
             <br />
 
@@ -37,7 +37,7 @@ const BasicThreadView: React.FC = () => {
                 }}
             />
             {isShowButton && (
-                <Button variant="contained" color="primary" component={Link} to="/thread/1/styled">
+                <Button variant="contained" color="primary" component={Link} to="/post/1/styled">
                     {"Yes"}
                 </Button>
             )}
@@ -45,4 +45,4 @@ const BasicThreadView: React.FC = () => {
     );
 };
 
-export default BasicThreadView;
+export default BasicPostView;

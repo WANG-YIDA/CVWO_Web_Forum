@@ -5,7 +5,7 @@ import Typewriter from "typewriter-effect";
 
 import React, { useState } from "react";
 
-const StyledThreadView: React.FC = () => {
+const StyledPostView: React.FC = () => {
     const [isShowTips, setIsShowTips] = useState(false);
 
     const showTips = () => {
@@ -35,7 +35,7 @@ const StyledThreadView: React.FC = () => {
             </Fade>
             <Card>
                 <CardContent>
-                    <Typography component="p">{"Viewing thread:"}</Typography>
+                    <Typography component="p">{"Viewing post:"}</Typography>
                     <Typography variant="h5" component="h5">
                         {"Inspirational Quotes"}
                     </Typography>
@@ -54,11 +54,11 @@ const StyledThreadView: React.FC = () => {
 
             <Link to="/">
                 <Button variant="contained" color="secondary">
-                    {"Back to threads"}
+                    {"Back to posts"}
                 </Button>
             </Link>
         </div>
     );
 };
 
-export default StyledThreadView;
+export default StyledPostView;

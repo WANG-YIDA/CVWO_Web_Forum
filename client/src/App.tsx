@@ -1,6 +1,5 @@
 import Home from "./pages/Home";
-import BasicThreadView from "./pages/BasicThreadView";
-import StyledThreadView from "./pages/StyledThreadView";
+import StyledPostView from "./pages/PostItemView";
 import React, { useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -30,9 +29,8 @@ const App: React.FC = () => {
             <ThemeProvider theme={theme}>
                 <BrowserRouter>
                     <Routes>
-                        <Route path="/thread/1" element={<BasicThreadView />} />
-                        <Route path="/thread/1/styled" element={<StyledThreadView />} />
                         <Route path="/" element={<Home />} />
+                        <Route path="/post/1/styled" element={<StyledPostView />} />
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

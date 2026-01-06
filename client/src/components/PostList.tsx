@@ -3,13 +3,13 @@ import "../App.css";
 import React from "react";
 import { Link } from "react-router-dom";
 
-const BasicThreadList: React.FC = () => {
+const BasicPostList: React.FC = () => {
     return (
         <div style={{ width: "25vw", margin: "auto", textAlign: "center" }}>
-            <h4>{"Welcome to my forum!"}</h4>
+            <h4>{"Post List"}</h4>
             <ul>
                 <li>
-                    <Link to="/thread/1">{"Inspirational Quotes"}</Link>
+                    <Link to="/post/1">{"Inspirational Quotes"}</Link>
                     {" by Aiken"}
                 </li>
             </ul>
@@ -17,4 +17,4 @@ const BasicThreadList: React.FC = () => {
     );
 };
 
-export default BasicThreadList;
+export default BasicPostList;

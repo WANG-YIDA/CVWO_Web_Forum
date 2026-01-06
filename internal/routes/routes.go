@@ -47,7 +47,7 @@ func GetRoutes(db *sql.DB) func(r chi.Router) {
 		})
 
 		// For testing connection with frontend
-		r.Get("/handshake", func(w http.ResponseWriter, req *http.Request) {
+		r.Get("/api/handshake", func(w http.ResponseWriter, req *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*") 
     		w.Header().Set("Content-Type", "application/json")
 	
@@ -58,26 +58,26 @@ func GetRoutes(db *sql.DB) func(r chi.Router) {
 		})
 
 		// Topics Handlers
-		r.Post("/topics", CreateRouteHandler(topics.HandleCreateTopic, db))
-		r.Get("/topics/{id}", CreateRouteHandler(topics.HandleViewTopic, db))
-		r.Get("/topics", CreateRouteHandler(topics.HandleViewTopics, db))
-		r.Patch("/topics/{id}", CreateRouteHandler(topics.HandleEditTopic, db))
-		r.Delete("/topics/{id}", CreateRouteHandler(topics.HandleDeleteTopic, db))
+		r.Post("/api/topics", CreateRouteHandler(topics.HandleCreateTopic, db))
+		r.Get("/api/topics/{id}", CreateRouteHandler(topics.HandleViewTopic, db))
+		r.Get("/api/topics", CreateRouteHandler(topics.HandleViewTopics, db))
+		r.Patch("/api/topics/{id}", CreateRouteHandler(topics.HandleEditTopic, db))
+		r.Delete("/api/topics/{id}", CreateRouteHandler(topics.HandleDeleteTopic, db))
 
 		// Posts Handlers
-		r.Post("/topics/{topic_id}/posts", CreateRouteHandler(posts.HandleCreatePost, db))
-		r.Get("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleViewPost, db))
-		r.Get("/topics/{topic_id}/posts", CreateRouteHandler(posts.HandleViewPosts, db))
-		r.Patch("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleEditPost, db))
-		r.Delete("/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleDeletePost, db))
+		r.Post("/api/topics/{topic_id}/posts", CreateRouteHandler(posts.HandleCreatePost, db))
+		r.Get("/api/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleViewPost, db))
+		r.Get("/api/topics/{topic_id}/posts", CreateRouteHandler(posts.HandleViewPosts, db))
+		r.Patch("/api/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleEditPost, db))
+		r.Delete("/api/topics/{topic_id}/posts/{post_id}", CreateRouteHandler(posts.HandleDeletePost, db))
 
 		// Comments Handlers
-		r.Post("/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleCreateComment, db))
-		r.Get("/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleViewComments, db))
-		r.Delete("/topics/{topic_id}/posts/{post_id}/comments/{comment_id}", CreateRouteHandler(comments.HandleDeleteComment, db))
+		r.Post("/api/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleCreateComment, db))
+		r.Get("/api/topics/{topic_id}/posts/{post_id}/comments", CreateRouteHandler(comments.HandleViewComments, db))
+		r.Delete("/api/topics/{topic_id}/posts/{post_id}/comments/{comment_id}", CreateRouteHandler(comments.HandleDeleteComment, db))
 
 		// Authentication Handlers
-		r.Post("/auth/login", CreateRouteHandler(auth.HandleLogin, db))
-		r.Post("/auth/register", CreateRouteHandler(auth.HandleRegister, db))
+		r.Post("/api/auth/login", CreateRouteHandler(auth.HandleLogin, db))
+		r.Post("/api/auth/register", CreateRouteHandler(auth.HandleRegister, db))
 	}
 }
