@@ -1,7 +1,7 @@
 import Home from "./pages/Home";
-import StyledPostView from "./pages/PostItemView";
-import React, { useEffect } from "react";
+import Login from "./pages/Login";
 import "./App.css";
+import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { blue, orange } from "@mui/material/colors";
@@ -30,7 +30,12 @@ const App: React.FC = () => {
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/post/1/styled" element={<StyledPostView />} />
+                        <Route path="/login" element={<Login />} />
+                        {/* <Route path="/register" element={<Register />} />
+                        <Route path="/topics" element={<TopicListView />} />
+                        <Route path="/topics/:topicID" element={<TopicItemView />} />
+                        <Route path="/topics/:topicID/posts" element={<PostListView />} />
+                        <Route path="/topics/:topicID/posts/postID" element={<PostItemView />} /> */}
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>
