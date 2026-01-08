@@ -24,28 +24,40 @@ const Home: React.FC = () => {
                 height: "100vh",
                 textAlign: "center",
                 gap: "6rem",
-                backgroundImage: "url('/images/home_background.jpg')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
             }}
         >
+            <style>
+                {`
+                    @keyframes gradient-flow {
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
+                    }
+                    @keyframes fade-in-up {
+                        from { opacity: 0; transform: translateY(20px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                `}
+            </style>
             <h1
                 style={{
                     whiteSpace: "nowrap",
                     fontSize: "4rem",
                     margin: 0,
-                    background: "linear-gradient(45deg, #2E3192, #1BFFFF)",
+                    background: "linear-gradient(45deg, #2E3192, #1BFFFF, #2E3192)",
+                    backgroundSize: "200% auto",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
+                    filter: "drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3))",
+                    animation: "gradient-flow 5s ease 0s 2, fade-in-up 1s ease-out forwards",
                 }}
             >
                 <Typewriter
                     onInit={(typewriter) => {
                         hideButton();
                         typewriter
-                            .changeDelay(80)
+                            .changeDelay(40)
                             .pauseFor(500)
                             .typeString("Welcome To CVWO Web Forum")
                             .callFunction(showButton)

@@ -1,64 +1,50 @@
-import BasicCommentList from "../components/CommentList";
-import { Button, Card, CardContent, Fade, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
-import Typewriter from "typewriter-effect";
+import Post from "../types/Post";
+import CommentList from "../components/CommentList";
+import PostItem from "../components/PostItem";
+import AddIcon from "@mui/icons-material/Add";
+import React from "react";
+import { Box, IconButton } from "@mui/material";
 
-import React, { useState } from "react";
-
-const StyledPostView: React.FC = () => {
-    const [isShowTips, setIsShowTips] = useState(false);
-
-    const showTips = () => {
-        setIsShowTips(true);
+const PostItemView: React.FC = () => {
+    const post: Post = {
+        topic: "test",
+        title: "post_test2",
+        body: "Lorem ipsLLorem ipsum dolor sit amet consectetur, adipisicing elit. At aliquam neque incidunt ratione enim minus, asperiores, labore earum totam numquam excepturi. Quod cupiditate amet quos repellat incidunt voluptatibus ad? Totam!orem ipsum dolor sit amet consectetur, adipisicing elit. At aliquam neque incidunt ratione enim minus, asperiores, labore earum totam numquam excepturi. Quod cupiditate amet quos repellat incidunt voluptatibus ad? Totam!um dolor sit amet consectetur adipisicing elit. Underword eligendi aut aliquam minus expedita repellendus magnam, quasi, iure omnis laboriosam quibusdam, corporis quam illo soluta nemo doloribus eius consequatur dignissimos.Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde eligendi aut aliquam minus expedita repellendus magnam, quasi, iure omnis laboriosam quibusdam, corporis quam illo soluta nemo doloribus eius consequatur dignissimos.",
+        author: "LucasW",
+        timestamp: new Date(),
     };
-
     return (
-        <div style={{ width: "30vw", margin: "auto" }}>
-            <Typography style={{ padding: "1em 0" }}>
-                <Typewriter
-                    onInit={(typewriter) => {
-                        typewriter
-                            .changeDelay(80)
-                            .typeString("This is much better, isn't it?")
-                            .pauseFor(1000)
-                            .callFunction(showTips)
-                            .start();
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "100vh",
+                textAlign: "center",
+                gap: "1rem",
+                paddingTop: "3rem",
+            }}
+        >
+            <PostItem post={post} />
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mr: -95, mb: -9 }}>
+                <IconButton
+                    aria-label="add"
+                    sx={{
+                        width: 40,
+                        height: 25,
+                        borderRadius: "8px",
+                        backgroundColor: "primary.main",
+                        color: "#fff",
+                        "&:hover": { backgroundColor: "primary.dark" },
                     }}
-                />
-            </Typography>
-            <Fade in={isShowTips} timeout={1000}>
-                <Typography style={{ paddingBottom: "1em" }}>
-                    {"Try looking at the "}
-                    <a href="https://mui.com/">{"Material UI"}</a>
-                    {" docs to see what other components you can use!"}
-                </Typography>
-            </Fade>
-            <Card>
-                <CardContent>
-                    <Typography component="p">{"Viewing post:"}</Typography>
-                    <Typography variant="h5" component="h5">
-                        {"Inspirational Quotes"}
-                    </Typography>
-                    <Typography color="textSecondary" gutterBottom>
-                        {"by Aiken"}
-                    </Typography>
-                    <Typography variant="body2" component="p">
-                        {'"The best way to predict the future is to invent it."'}
-                        <br />
-                        {"- Alan Kay"}
-                    </Typography>
-                </CardContent>
-            </Card>
-
-            <BasicCommentList styled={true} />
-
-            <Link to="/">
-                <Button variant="contained" color="secondary">
-                    {"Back to posts"}
-                </Button>
-            </Link>
+                >
+                    <AddIcon sx={{ fontSize: 16 }} />
+                </IconButton>
+            </Box>
+            <CommentList />
         </div>
     );
 };
 
-export default StyledPostView;
+export default PostItemView;

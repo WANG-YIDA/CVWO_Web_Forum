@@ -2,12 +2,9 @@ import CommentItem from "./CommentItem";
 import Comment from "../types/Comment";
 
 import React from "react";
+import { Box, Typography } from "@mui/material";
 
-type Props = {
-    styled: boolean;
-};
-
-const BasicCommentList: React.FC<Props> = ({ styled }: Props) => {
+const BasicCommentList: React.FC = () => {
     const comments: Comment[] = [
         {
             body:
@@ -23,18 +20,21 @@ const BasicCommentList: React.FC<Props> = ({ styled }: Props) => {
             timestamp: new Date(2022, 11, 1, 11, 11, 11),
         },
         {
-            body: "Nine people can't make a baby in a month.\n" + " ~ Fred Brooks",
+            body: "LLorem ipsum dolor sit amet consectetur, adipisicing elit. At aliquam neque incidunt ratione enim minus, asperiores, labore earum totam numquam excepturi. Quod cupiditate amet quos repellat incidunt voluptatibus ad? Totam!orem ipsum dolor sit amet consectetur, adipisicing elit. At aliquam neque incidunt ratione enim minus, asperiores, labore earum totam numquam excepturi. Quod cupiditate amet quos repellat incidunt voluptatibus ad? Totam!",
             author: "Duuet",
             timestamp: new Date(2022, 11, 2, 10, 30, 0),
         },
     ];
 
     return (
-        <ul>
+        <Box sx={{ padding: 2, maxWidth: 1000, margin: "0 auto" }}>
+            <Typography variant="h5" color="textSecondary" gutterBottom align="left" marginBottom={2}>
+                <strong>Comments:</strong>
+            </Typography>
             {comments.map((comment) => (
-                <CommentItem comment={comment} styled={styled} key="" />
+                <CommentItem comment={comment} key="" />
             ))}
-        </ul>
+        </Box>
     );
 };
 

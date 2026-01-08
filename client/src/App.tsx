@@ -1,5 +1,9 @@
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
+import TopicListView from "./pages/TopicListView";
+import PostListView from "./pages/PostListView";
+import PostItemView from "./pages/PostItemView";
 import "./App.css";
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -31,11 +35,10 @@ const App: React.FC = () => {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
-                        {/* <Route path="/register" element={<Register />} />
+                        <Route path="/register" element={<Register />} />
                         <Route path="/topics" element={<TopicListView />} />
-                        <Route path="/topics/:topicID" element={<TopicItemView />} />
                         <Route path="/topics/:topicID/posts" element={<PostListView />} />
-                        <Route path="/topics/:topicID/posts/postID" element={<PostItemView />} /> */}
+                        <Route path="/topics/:topicID/posts/:postID" element={<PostItemView />} />
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>

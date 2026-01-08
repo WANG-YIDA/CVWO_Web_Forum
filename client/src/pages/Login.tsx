@@ -3,17 +3,10 @@ import React from "react";
 
 const Login: React.FC = () => {
     return (
-        <div
-            style={{
-                backgroundImage: "url('/images/home_background.jpg')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-            }}
-        >
+        <div>
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
                 <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: "100%" }}>
-                    <Typography variant="h4" gutterBottom align="center">
+                    <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: "bold" }}>
                         Login
                     </Typography>
 
