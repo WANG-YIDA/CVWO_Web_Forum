@@ -121,6 +121,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 	}
 
 	comment.ID = int(id)	
+	comment.Author = username
 	comment.CreatedAt = t
 	comment.PostID = post_id
 

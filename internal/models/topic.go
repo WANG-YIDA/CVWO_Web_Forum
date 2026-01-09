@@ -6,7 +6,7 @@ type Topic struct {
     ID          int       `json:"id"` 
     Description string    `json:"description"` 
     UserID      int       `json:"user_id"`
-    Author      int       `json:"author"`
+    Author      string    `json:"author"`
     Name        string    `json:"name"` 
     CreatedAt   time.Time `json:"created_at"`
 }

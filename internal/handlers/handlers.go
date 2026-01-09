@@ -33,6 +33,7 @@ func CreateAPIHandler(
 			Payload: api.Payload{
 				Data: data,
 			},
+			Success: true,
 		}, nil
 	}
 }

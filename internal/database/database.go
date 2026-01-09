@@ -19,8 +19,8 @@ func createTables(db *sql.DB) {
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		description TEXT,
 		user_id INTEGER NOT NULL,
-		name TEXT UNIQUE NOT NULL,
 		author TEXT NOT NULL,
+		name TEXT UNIQUE NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY(user_id) REFERENCES users(id)
 	);

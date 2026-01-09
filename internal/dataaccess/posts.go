@@ -47,7 +47,7 @@ func CheckPostExistByPostIDTopicID(db *sql.DB, post_id int, topic_id int) (bool,
 }
 
 func InsertNewPost(db *sql.DB, title string, user_id int, author string, topic_id int, content string, created_at time.Time) (sql.Result, error) {
-	query := `INSERT INTO posts (title, user_id, author, topic_id, content, created_at) VALUES (?, ?, ?, ?, ?)`
+	query := `INSERT INTO posts (title, user_id, author, topic_id, content, created_at) VALUES (?, ?, ?, ?, ?, ?)`
 	res, err := db.Exec(query, title, user_id, topic_id, author, content, created_at)
 	return res, err
 }

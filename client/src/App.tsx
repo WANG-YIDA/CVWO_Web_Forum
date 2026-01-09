@@ -22,7 +22,7 @@ const App: React.FC = () => {
 
     useEffect(() => {
         //for testing connection with backend
-        fetch("http://localhost:8000/handshake")
+        fetch("http://localhost:8000/api/handshake")
             .then((res) => res.json())
             .then((data) => console.log(data.message))
             .catch((err) => console.log("Connection failed: " + err));

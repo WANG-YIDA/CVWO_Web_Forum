@@ -83,7 +83,7 @@ func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 
 	// Get username
 	username, err := dataaccess.GetUsernameByUserID(db, topic.UserID)
-		if err != nil {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateTopic"))
 	}
@@ -104,6 +104,7 @@ func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 	}
 
 	topic.ID = int(id)	
+	topic.Author = username
 	topic.CreatedAt = t
 
 	return &models.TopicsResult{

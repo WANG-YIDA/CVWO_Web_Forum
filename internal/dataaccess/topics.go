@@ -55,7 +55,7 @@ func CheckTopicExistByTopicID(db *sql.DB, topic_id int) (bool, error) {
 }
 
 func InsertNewTopic(db *sql.DB, topic_name string, user_id int, author string, description string, created_at time.Time) (sql.Result, error) {
-	query := `INSERT INTO topics (name, user_id, author, description, created_at) VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO topics (name, user_id, author, description, created_at) VALUES (?, ?, ?, ?, ?)`
 	res, err := db.Exec(query, topic_name, user_id, author, description, created_at)
 	return res, err
 }

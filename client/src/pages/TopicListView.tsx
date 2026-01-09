@@ -4,6 +4,14 @@ import AddIcon from "@mui/icons-material/Add";
 import { Box, IconButton, keyframes, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
+interface TopicJSON {
+    id: number;
+    name: string;
+    description: string;
+    author: string;
+    created_at: string;
+}
+
 const fadeIn = keyframes`
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
@@ -17,15 +25,15 @@ const TopicListView: React.FC = () => {
         const fetchTopics = async () => {
             try {
                 // Request to View Topics
-                const response = await fetch("http://localhost:8080/topics", { method: "GET" });
+                const response = await fetch("http://localhost:8000/api/topics", { method: "GET" });
                 const data_json = await response.json();
 
                 //process data to get topics
                 if (data_json.success && data_json.payload?.data) {
-                    const topicListResult = JSON.parse(data_json.payload.data);
+                    const topicListResult = data_json.payload.data;
 
                     if (topicListResult.success && topicListResult.topics) {
-                        const topicList: Topic[] = topicListResult.topics.map((topic: any) => ({
+                        const topicList: Topic[] = topicListResult.topics.map((topic: TopicJSON) => ({
                             id: topic.id,
                             name: topic.name,
                             description: topic.description,
@@ -58,7 +66,6 @@ const TopicListView: React.FC = () => {
                 minHeight: "100vh",
                 textAlign: "center",
                 gap: "3rem",
-                paddingTop: "2rem",
             }}
         >
             <Box sx={{ width: "100%", maxWidth: 800, padding: "0 16px", margin: "0 auto" }}>
@@ -80,22 +87,28 @@ const TopicListView: React.FC = () => {
                     <strong>Discover Your Conversations</strong>
                 </Typography>
 
-                <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 1, mb: -1 }}>
-                    <IconButton
-                        aria-label="add"
-                        sx={{
-                            width: 40,
-                            height: 25,
-                            borderRadius: "8px",
-                            backgroundColor: "primary.main",
-                            color: "#fff",
-                            "&:hover": { backgroundColor: "primary.dark" },
-                        }}
-                    >
-                        <AddIcon sx={{ fontSize: 16 }} />
-                    </IconButton>
-                </Box>
-                <TopicList />
+                {loading ? (
+                    <Typography sx={{ mt: 4, color: "text.secondary" }}>Loading topics...</Typography>
+                ) : (
+                    <>
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 1, mb: -1 }}>
+                            <IconButton
+                                aria-label="add"
+                                sx={{
+                                    width: 40,
+                                    height: 25,
+                                    borderRadius: "8px",
+                                    backgroundColor: "primary.main",
+                                    color: "#fff",
+                                    "&:hover": { backgroundColor: "primary.dark" },
+                                }}
+                            >
+                                <AddIcon sx={{ fontSize: 16 }} />
+                            </IconButton>
+                        </Box>
+                        <TopicList topics={topics} />
+                    </>
+                )}
             </Box>
         </div>
     );

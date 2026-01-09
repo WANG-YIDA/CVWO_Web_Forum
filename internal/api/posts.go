@@ -112,6 +112,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}
 
 	post.TopicID = topic_id
 	post.ID = int(id)	
+	post.Author = username
 	post.CreatedAt = t
 
 	return &models.PostsResult{
