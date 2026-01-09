@@ -88,10 +88,17 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}
 		}, nil
 	}
 
+	// Get username
+	username, err := dataaccess.GetUsernameByUserID(db, post.UserID)
+		if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreatePost"))
+	}
+
 	// Create and insert a new post 
 	t := time.Now()
 
-	res, err := dataaccess.InsertNewPost(db, post.Title, post.UserID, topic_id, post.Content, t)
+	res, err := dataaccess.InsertNewPost(db, post.Title, post.UserID, username, topic_id, post.Content, t)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreatePost"))

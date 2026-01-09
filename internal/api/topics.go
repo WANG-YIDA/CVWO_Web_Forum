@@ -81,10 +81,17 @@ func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 		}, nil
 	}
 
+	// Get username
+	username, err := dataaccess.GetUsernameByUserID(db, topic.UserID)
+		if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateTopic"))
+	}
+
 	// Create and insert a new topic 
 	t := time.Now()
 
-	res, err := dataaccess.InsertNewTopic(db, topic.Name, topic.UserID, topic.Description, t)
+	res, err := dataaccess.InsertNewTopic(db, topic.Name, topic.UserID, username, topic.Description, t)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateTopic"))

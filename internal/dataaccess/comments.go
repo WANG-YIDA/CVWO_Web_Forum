@@ -10,7 +10,7 @@ import (
 func GetCommentByCommentIDAndPostID(db *sql.DB, comment_id int, post_id int) (*models.Comment, error) {
 	query := `SELECT * FROM comments WHERE id = ? AND post_id = ?`
 	comment := &models.Comment{}
-	err := db.QueryRow(query, comment_id, post_id).Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt)
+	err := db.QueryRow(query, comment_id, post_id).Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Author, &comment.Content, &comment.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func GetCommentsByPostID(db *sql.DB, post_id int) (*[]models.Comment, error) {
 
 	for rows.Next() {
 		comment := models.Comment{}
-		err := rows.Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt)
+		err := rows.Scan(&comment.ID, &comment.PostID, &comment.UserID,&comment.Author, &comment.Content, &comment.CreatedAt)
 		if err != nil {
             return nil, err
         }
@@ -42,9 +42,9 @@ func GetCommentsByPostID(db *sql.DB, post_id int) (*[]models.Comment, error) {
 	return &comments, err 
 }
 
-func InsertNewComment(db *sql.DB, post_id int, user_id int, content string, created_at time.Time) (sql.Result, error) {
-	query := `INSERT INTO comments (post_id, user_id, content, created_at) VALUES (?, ?, ?, ?)`
-	res, err := db.Exec(query, post_id, user_id, content, created_at)
+func InsertNewComment(db *sql.DB, post_id int, user_id int, author string, content string, created_at time.Time) (sql.Result, error) {
+	query := `INSERT INTO comments (post_id, user_id, author, content, created_at) VALUES (?, ?, ?, ?)`
+	res, err := db.Exec(query, post_id, user_id, author, content, created_at)
 	return res, err
 }
 

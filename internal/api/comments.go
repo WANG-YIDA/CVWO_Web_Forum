@@ -97,11 +97,18 @@ func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 			Error: InvalidCommentContent,
 		}, nil
 	}
+
+	// Get username
+	username, err := dataaccess.GetUsernameByUserID(db, comment.UserID)
+		if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateTopic"))
+	}
 	
 	// Create and insert a new comment 
 	t := time.Now()
 
-	res, err := dataaccess.InsertNewComment(db, post_id, comment.UserID, comment.Content, t)
+	res, err := dataaccess.InsertNewComment(db, post_id, comment.UserID, username, comment.Content, t)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.CreateComment"))

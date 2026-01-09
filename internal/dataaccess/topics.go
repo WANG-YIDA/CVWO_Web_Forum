@@ -8,15 +8,15 @@ import (
 )
 
 func GetTopicByTopicID(db *sql.DB, topic_id int) (*models.Topic, error) {
-	query := `SELECT id, name, user_id, description, created_at FROM topics WHERE id = ?`
+	query := `SELECT id, name, user_id, author, description, created_at FROM topics WHERE id = ?`
 	topic := &models.Topic{}
-	err := db.QueryRow(query, topic_id).Scan(&topic.ID, &topic.Name, &topic.UserID, &topic.Description, &topic.CreatedAt)
+	err := db.QueryRow(query, topic_id).Scan(&topic.ID, &topic.Name, &topic.UserID, &topic.Author, &topic.Description, &topic.CreatedAt)
 	return topic, err
 }
 
 
 func GetTopics(db *sql.DB) (*[]models.Topic, error) {
-	query := `SELECT id, name, user_id, description, created_at FROM topics`
+	query := `SELECT id, name, user_id, author, description, created_at FROM topics`
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func GetTopics(db *sql.DB) (*[]models.Topic, error) {
 
 	for rows.Next() {
 		topic := models.Topic{}
-		err := rows.Scan(&topic.ID, &topic.Name, &topic.UserID, &topic.Description, &topic.CreatedAt)
+		err := rows.Scan(&topic.ID, &topic.Name, &topic.UserID, &topic.Author, &topic.Description, &topic.CreatedAt)
 		if err != nil {
             return nil, err
         }
@@ -54,9 +54,9 @@ func CheckTopicExistByTopicID(db *sql.DB, topic_id int) (bool, error) {
 	return exist, err
 }
 
-func InsertNewTopic(db *sql.DB, topic_name string, user_id int, description string, created_at time.Time) (sql.Result, error) {
-	query := `INSERT INTO topics (name, user_id, description, created_at) VALUES (?, ?, ?, ?)`
-	res, err := db.Exec(query, topic_name, user_id, description, created_at)
+func InsertNewTopic(db *sql.DB, topic_name string, user_id int, author string, description string, created_at time.Time) (sql.Result, error) {
+	query := `INSERT INTO topics (name, user_id, author, description, created_at) VALUES (?, ?, ?, ?)`
+	res, err := db.Exec(query, topic_name, user_id, author, description, created_at)
 	return res, err
 }
 

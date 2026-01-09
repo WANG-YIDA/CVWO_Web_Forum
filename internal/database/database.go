@@ -20,6 +20,7 @@ func createTables(db *sql.DB) {
 		description TEXT,
 		user_id INTEGER NOT NULL,
 		name TEXT UNIQUE NOT NULL,
+		author TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY(user_id) REFERENCES users(id)
 	);
@@ -27,6 +28,7 @@ func createTables(db *sql.DB) {
 	CREATE TABLE IF NOT EXISTS posts (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		user_id INTEGER NOT NULL,
+		author TEXT NOT NULL,
 		topic_id INTEGER NOT NULL,
 		title TEXT NOT NULL,
 		content TEXT NOT NULL,
@@ -38,6 +40,7 @@ func createTables(db *sql.DB) {
 	CREATE TABLE IF NOT EXISTS comments (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		post_id INTEGER NOT NULL,
+		author TEXT NOT NULL,
 		user_id INTEGER NOT NULL,
 		content TEXT NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

@@ -1,7 +1,8 @@
 import TopicList from "../components/TopicList";
+import Topic from "../types/Topic";
 import AddIcon from "@mui/icons-material/Add";
 import { Box, IconButton, keyframes, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const fadeIn = keyframes`
     from { opacity: 0; transform: translateY(12px); }
@@ -9,6 +10,44 @@ const fadeIn = keyframes`
 `;
 
 const TopicListView: React.FC = () => {
+    const [topics, setTopics] = useState<Topic[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const fetchTopics = async () => {
+            try {
+                // Request to View Topics
+                const response = await fetch("http://localhost:8080/topics", { method: "GET" });
+                const data_json = await response.json();
+
+                //process data to get topics
+                if (data_json.success && data_json.payload?.data) {
+                    const topicListResult = JSON.parse(data_json.payload.data);
+
+                    if (topicListResult.success && topicListResult.topics) {
+                        const topicList: Topic[] = topicListResult.topics.map((topic: any) => ({
+                            id: topic.id,
+                            name: topic.name,
+                            description: topic.description,
+                            author: topic.author,
+                            timestamp: new Date(topic.created_at),
+                        }));
+
+                        setTopics(topicList);
+                    }
+                } else {
+                    console.error("Failed to GET topics: %s", data_json.error);
+                }
+            } catch (error) {
+                console.error("Error fetching topics:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTopics();
+    }, []);
+
     return (
         <div
             style={{
