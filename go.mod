@@ -7,3 +7,5 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.32
 	github.com/pkg/errors v0.9.1
 )
+
+require github.com/go-chi/cors v1.2.2 // indirect

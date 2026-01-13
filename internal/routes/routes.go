@@ -11,6 +11,7 @@ import (
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/posts"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/topics"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 )
 
 func CreateRouteHandler(handlerFunc func(http.ResponseWriter, *http.Request, *sql.DB) (*api.Response, error), db *sql.DB) http.HandlerFunc {
@@ -32,25 +33,17 @@ func CreateRouteHandler(handlerFunc func(http.ResponseWriter, *http.Request, *sq
 
 func GetRoutes(db *sql.DB) func(r chi.Router) {
 	return func(r chi.Router) {
-		// Middleware
-		r.Use(func(handler http.Handler) http.Handler {
-			return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				w.Header().Set("Access-Control-Allow-Origin", "*")
-				w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS")
-				w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-				if req.Method == http.MethodOptions {
-					w.WriteHeader(http.StatusOK)
-					return
-				}
-				handler.ServeHTTP(w, req)
-			})
-		})
+		// CORS Middleware
+		r.Use(cors.Handler(cors.Options{
+			AllowedOrigins: []string{"*"}, 
+			AllowedMethods: []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
+			AllowedHeaders: []string{"Content-Type"},
+			AllowCredentials: false,
+            MaxAge:           300,
+		}))
 
 		// For testing connection with frontend
 		r.Get("/api/handshake", func(w http.ResponseWriter, req *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "*") 
-    		w.Header().Set("Content-Type", "application/json")
-	
     		json.NewEncoder(w).Encode(map[string]string{
 				   "status": "Connected",
    			       "message": "Go backend is connected to React!",
