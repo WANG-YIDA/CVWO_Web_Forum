@@ -11,7 +11,6 @@ import (
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/posts"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/handlers/topics"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/cors"
 )
 
 func CreateRouteHandler(handlerFunc func(http.ResponseWriter, *http.Request, *sql.DB) (*api.Response, error), db *sql.DB) http.HandlerFunc {
@@ -33,15 +32,6 @@ func CreateRouteHandler(handlerFunc func(http.ResponseWriter, *http.Request, *sq
 
 func GetRoutes(db *sql.DB) func(r chi.Router) {
 	return func(r chi.Router) {
-		// CORS Middleware
-		r.Use(cors.Handler(cors.Options{
-			AllowedOrigins: []string{"*"}, 
-			AllowedMethods: []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
-			AllowedHeaders: []string{"Content-Type"},
-			AllowCredentials: false,
-            MaxAge:           300,
-		}))
-
 		// For testing connection with frontend
 		r.Get("/api/handshake", func(w http.ResponseWriter, req *http.Request) {
     		json.NewEncoder(w).Encode(map[string]string{

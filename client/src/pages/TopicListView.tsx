@@ -3,6 +3,7 @@ import Topic from "../types/Topic";
 import AddIcon from "@mui/icons-material/Add";
 import { Box, IconButton, keyframes, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface TopicJSON {
     id: number;
@@ -20,15 +21,27 @@ const fadeIn = keyframes`
 const TopicListView: React.FC = () => {
     const [topics, setTopics] = useState<Topic[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const navigate = useNavigate();
+
+    // navigate to login page if not login yet
+    useEffect(() => {
+        const user_id = sessionStorage.getItem("user_id");
+        if (!user_id) {
+            navigate("/login");
+        }
+    }, [navigate]);
 
     useEffect(() => {
         const fetchTopics = async () => {
             try {
-                // Request to View Topics
-                const response = await fetch("http://localhost:8000/api/topics", { method: "GET" });
+                // Request to GET Topics
+                const response = await fetch("http://localhost:8000/api/topics", {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                });
                 const data_json = await response.json();
 
-                //process data to get topics
+                // process data to get topics
                 if (data_json.success && data_json.payload?.data) {
                     const topicListResult = data_json.payload.data;
 
