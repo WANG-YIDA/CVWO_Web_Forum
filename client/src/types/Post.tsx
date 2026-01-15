@@ -1,7 +1,9 @@
 type Post = {
-    topic: string;
+    id: number;
+    topic_id: number;
     title: string;
-    body: string;
+    content: string;
+    user_id: number;
     author: string;
     timestamp: Date;
 };

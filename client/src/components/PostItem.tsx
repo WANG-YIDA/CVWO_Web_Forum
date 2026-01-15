@@ -67,12 +67,12 @@ const PostItem: React.FC<Props> = ({ post }) => {
                         </Box>
                     </Box>
                     <Typography variant="body2" color="textPrimary" className={classes.postBody} component="p">
-                        {post.body}
+                        {post.content}
                     </Typography>
                 </CardContent>
                 <CardActions className={classes.cardActions}>
                     <Typography color="textSecondary" className={classes.metadata}>
-                        {"Topic > " + post.topic}
+                        {"Topic > " + post.topic_id}
                     </Typography>
                     <Typography color="textSecondary" className={classes.metadata}>
                         {"Posted by "}

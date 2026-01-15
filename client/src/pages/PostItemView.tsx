@@ -7,9 +7,12 @@ import { Box, IconButton } from "@mui/material";
 
 const PostItemView: React.FC = () => {
     const post: Post = {
-        topic: "test",
+        id: 1,
+        user_id: 1,
+        topic_id: 1,
         title: "post_test2",
-        body: "Lorem ipsLLorem ipsum dolor sit amet consectetur, adipisicing elit. At aliquam neque incidunt ratione enim minus, asperiores, labore earum totam numquam excepturi. Quod cupiditate amet quos repellat incidunt voluptatibus ad? Totam!orem ipsum dolor sit amet consectetur, adipisicing elit. At aliquam neque incidunt ratione enim minus, asperiores, labore earum totam numquam excepturi. Quod cupiditate amet quos repellat incidunt voluptatibus ad? Totam!um dolor sit amet consectetur adipisicing elit. Underword eligendi aut aliquam minus expedita repellendus magnam, quasi, iure omnis laboriosam quibusdam, corporis quam illo soluta nemo doloribus eius consequatur dignissimos.Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde eligendi aut aliquam minus expedita repellendus magnam, quasi, iure omnis laboriosam quibusdam, corporis quam illo soluta nemo doloribus eius consequatur dignissimos.",
+        content:
+            "Lorem ipsLLorem ipsum dolor sit amet consectetur, adipisicing elit. At aliquam neque incidunt ratione enim minus, asperiores, labore earum totam numquam excepturi. Quod cupiditate amet quos repellat incidunt voluptatibus ad? Totam!orem ipsum dolor sit amet consectetur, adipisicing elit. At aliquam neque incidunt ratione enim minus, asperiores, labore earum totam numquam excepturi. Quod cupiditate amet quos repellat incidunt voluptatibus ad? Totam!um dolor sit amet consectetur adipisicing elit. Underword eligendi aut aliquam minus expedita repellendus magnam, quasi, iure omnis laboriosam quibusdam, corporis quam illo soluta nemo doloribus eius consequatur dignissimos.Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde eligendi aut aliquam minus expedita repellendus magnam, quasi, iure omnis laboriosam quibusdam, corporis quam illo soluta nemo doloribus eius consequatur dignissimos.",
         author: "LucasW",
         timestamp: new Date(),
     };

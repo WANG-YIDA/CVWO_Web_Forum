@@ -10,6 +10,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Divider,
     IconButton,
     keyframes,
     Snackbar,
@@ -41,6 +42,7 @@ const TopicListView: React.FC = () => {
     const [userID, setUserID] = useState<number | null>(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
+    const [server_error, setServerError] = useState(false);
     const navigate = useNavigate();
 
     const handleClickOpen = () => {
@@ -149,9 +151,11 @@ const TopicListView: React.FC = () => {
                     }
                 } else {
                     console.error("Failed to GET topics: %s", data_json.error);
+                    setServerError(true);
                 }
             } catch (error) {
                 console.error("Error fetching topics:", error);
+                setServerError(true);
             } finally {
                 setLoading(false);
             }
@@ -160,7 +164,13 @@ const TopicListView: React.FC = () => {
         fetchTopics();
     }, []);
 
-    return (
+    return server_error ? (
+        <Box sx={{ width: "100%", mt: 8, display: "flex", justifyContent: "center" }}>
+            <Alert severity="error" variant="filled">
+                Oops! Something went wrong. Please try again later.
+            </Alert>
+        </Box>
+    ) : (
         <div
             style={{
                 display: "flex",
@@ -196,7 +206,7 @@ const TopicListView: React.FC = () => {
                     <Typography sx={{ mt: 4, color: "text.secondary" }}>Loading topics...</Typography>
                 ) : (
                     <>
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 1, mb: -1 }}>
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 1, mb: 1.5 }}>
                             <IconButton
                                 aria-label="add"
                                 sx={{
@@ -244,6 +254,8 @@ const TopicListView: React.FC = () => {
                                 Topic Deleted!
                             </Alert>
                         </Snackbar>
+
+                        <Divider sx={{ borderColor: "#bababeff", borderBottomWidth: 2 }} />
 
                         <TopicList topics={topics} user_id={userID} onDeleteTopic={handleDeleteTopic} />
                     </>

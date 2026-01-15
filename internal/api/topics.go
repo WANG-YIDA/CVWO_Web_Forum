@@ -75,10 +75,7 @@ func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.TopicsResult{
-			Success: false,
-			Error: fmt.Sprintf("User does not exist: %d", topic.UserID),
-		}, nil
+		return nil, errors.Wrap(err, fmt.Sprintf("User does not exist: %d", topic.UserID))
 	}
 
 	// Get username
@@ -127,10 +124,7 @@ func ViewTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{},
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
 			w.WriteHeader(http.StatusNotFound)
-            return &models.TopicsResult{
-				Success: false,
-				Error: fmt.Sprintf("Topic does not exist: %d", id),
-			}, nil
+		  return nil, errors.Wrap(err, fmt.Sprintf("Topic does not exist: %d", id))
         }
 		w.WriteHeader(http.StatusInternalServerError) 
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewTopic"))
@@ -189,10 +183,7 @@ func EditTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{},
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
 			w.WriteHeader(http.StatusNotFound)
-            return &models.TopicsResult{
-				Success: false,
-				Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
-			}, nil
+		  return nil, errors.Wrap(err, fmt.Sprintf("Topic does not exist: %d", topic_id))
         }
 		w.WriteHeader(http.StatusInternalServerError) 
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.EditTopic"))
@@ -257,10 +248,7 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
 			w.WriteHeader(http.StatusNotFound)
-            return &models.TopicsResult{
-				Success: false,
-				Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
-			}, nil
+		  return nil, errors.Wrap(err, fmt.Sprintf("Topic does not exist: %d", topic_id))
         }
 		w.WriteHeader(http.StatusInternalServerError) 
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeleteTopic"))

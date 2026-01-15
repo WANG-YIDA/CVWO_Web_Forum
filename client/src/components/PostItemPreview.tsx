@@ -2,9 +2,11 @@ import Post from "../types/Post";
 import { makeStyles } from "@mui/styles";
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
 import React from "react";
+import { Link } from "react-router-dom";
 
 type Props = {
     post: Post;
+    topicID: string;
 };
 
 const useStyles = makeStyles(() => ({
@@ -43,28 +45,32 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const PostItemPreview: React.FC<Props> = ({ post }) => {
+const PostItemPreview: React.FC<Props> = ({ post, topicID }) => {
     const classes = useStyles();
 
     return (
-        <Card className={classes.postCard}>
-            <CardContent>
-                <Typography variant="h5" className={classes.postTitle}>
-                    {post.title}
-                </Typography>
-                <Typography variant="body2" color="textPrimary" className={classes.postBody} component="p">
-                    {post.body}
-                </Typography>
-            </CardContent>
-            <CardActions className={classes.cardActions}>
-                <Button size="small">View</Button>
-                <Typography color="textSecondary" className={classes.metadata}>
-                    {"Posted by "}
-                    <strong>{post.author}</strong>
-                    {" on " + post.timestamp.toLocaleString()}
-                </Typography>
-            </CardActions>
-        </Card>
+        <>
+            <Card className={classes.postCard}>
+                <CardContent>
+                    <Typography variant="h5" className={classes.postTitle}>
+                        {post.title}
+                    </Typography>
+                    <Typography variant="body2" color="textPrimary" className={classes.postBody} component="p">
+                        {post.content}
+                    </Typography>
+                </CardContent>
+                <CardActions className={classes.cardActions}>
+                    <Button size="small" component={Link} to={`/topics/${topicID}/posts/${post.id}`}>
+                        View
+                    </Button>
+                    <Typography color="textSecondary" className={classes.metadata}>
+                        {"Posted by "}
+                        <strong>{post.author}</strong>
+                        {" on " + post.timestamp.toLocaleString()}
+                    </Typography>
+                </CardActions>
+            </Card>
+        </>
     );
 };
 

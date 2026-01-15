@@ -68,10 +68,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
-			Success: false,
-			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
-		}, nil
+		return nil, errors.Wrap(err, fmt.Sprintf("Topic does not exist: %d", topic_id))
 	}
 
 	exist, err = dataaccess.CheckUserExistByUserID(db, post.UserID)
@@ -82,10 +79,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
-			Success: false,
-			Error: fmt.Sprintf("User does not exist: %d", post.UserID),
-		}, nil
+		return nil, errors.Wrap(err, fmt.Sprintf("User does not exist: %d", post.UserID))
 	}
 
 	// Get username
@@ -146,20 +140,14 @@ func ViewPost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, 
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
-			Success: false,
-			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
-		}, nil
+		  return nil, errors.Wrap(err, fmt.Sprintf("Topic does not exist: %d", topic_id))
 	}
 
 	post, err := dataaccess.GetPostByPostIDAndTopicID(db, post_id, topic_id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
 			w.WriteHeader(http.StatusNotFound)
-            return &models.PostsResult{
-				Success: false,
-				Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
-			}, nil
+		  return nil, errors.Wrap(err, fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id))
         }
 		w.WriteHeader(http.StatusInternalServerError) 
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.ViewPost"))
@@ -189,10 +177,7 @@ func ViewPosts(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{},
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
-			Success: false,
-			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
-		}, nil
+		  return nil, errors.Wrap(err, fmt.Sprintf("Topic does not exist: %d", topic_id))
 	}
 
 	// Check if any post exists
@@ -255,20 +240,14 @@ func EditPost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, 
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
-			Success: false,
-			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
-		}, nil
+		  return nil, errors.Wrap(err, fmt.Sprintf("Topic does not exist: %d", topic_id))
 	}
 
 	post, err := dataaccess.GetPostByPostIDAndTopicID(db, post_id, topic_id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
 			w.WriteHeader(http.StatusNotFound)
-            return &models.PostsResult{
-				Success: false,
-				Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
-			}, nil
+		  return nil, errors.Wrap(err, fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id))
         }
 		w.WriteHeader(http.StatusInternalServerError)
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.EditPost"))
@@ -279,7 +258,7 @@ func EditPost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, 
 		w.WriteHeader(http.StatusForbidden)
 		return &models.PostsResult{
 				Success: false,
-				Error: fmt.Sprintf("User: %d does not have right to edit this post: %d", userID, post_id),
+				Error: fmt.Sprintf("You don't have the right to edit this post: %d", post_id),
 			}, nil	
 	}
 
@@ -354,20 +333,14 @@ func DeletePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}
 
 	if !exist {
 		w.WriteHeader(http.StatusNotFound)
-		return &models.PostsResult{
-			Success: false,
-			Error: fmt.Sprintf("Topic does not exist: %d", topic_id),
-		}, nil
+		  return nil, errors.Wrap(err, fmt.Sprintf("Topic does not exist: %d", topic_id))
 	}
 
 	post, err := dataaccess.GetPostByPostIDAndTopicID(db, post_id, topic_id)	
 	if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
 			w.WriteHeader(http.StatusNotFound)
-            return &models.PostsResult{
-				Success: false,
-				Error: fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id),
-			}, nil
+		  return nil, errors.Wrap(err, fmt.Sprintf("Post: %d does not exist in topic: %d", post_id, topic_id))
         }
 		w.WriteHeader(http.StatusInternalServerError)
         return nil, errors.Wrap(err, fmt.Sprintf(ErrDB, "api.DeletePost"))
@@ -378,7 +351,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}
 		w.WriteHeader(http.StatusForbidden)
 		return &models.PostsResult{
 				Success: false,
-				Error: fmt.Sprintf("User: %d does not have right to delete post: %d", userID, post_id),
+				Error: fmt.Sprintf("You don't have the right to delete this post: %d", post_id),
 			}, nil	
 	}
 
