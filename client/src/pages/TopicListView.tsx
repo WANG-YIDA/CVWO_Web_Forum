@@ -2,6 +2,7 @@ import TopicList from "../components/TopicList";
 import Topic from "../types/Topic";
 import AddIcon from "@mui/icons-material/Add";
 import {
+    Alert,
     Box,
     Button,
     Dialog,
@@ -11,6 +12,7 @@ import {
     DialogTitle,
     IconButton,
     keyframes,
+    Snackbar,
     TextField,
     Typography,
 } from "@mui/material";
@@ -21,6 +23,7 @@ interface TopicJSON {
     id: number;
     name: string;
     description: string;
+    user_id: number;
     author: string;
     created_at: string;
 }
@@ -36,6 +39,8 @@ const TopicListView: React.FC = () => {
     const [open, setOpen] = useState(false);
     const [error, setError] = useState("");
     const [userID, setUserID] = useState<number | null>(null);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
     const navigate = useNavigate();
 
     const handleClickOpen = () => {
@@ -76,14 +81,16 @@ const TopicListView: React.FC = () => {
                     const new_topic: Topic = {
                         id: topic_result.topic.id,
                         name: topic_result.topic.name,
+                        user_id: topic_result.topic.user_id,
                         description: topic_result.topic.description,
                         author: topic_result.topic.author,
                         timestamp: new Date(topic_result.topic.created_at),
                     };
 
-                    // put new topic at top
+                    // put new topic at top, close dialog then show success message
                     setTopics((topics) => [new_topic, ...topics]);
                     setOpen(false);
+                    setShowSuccess(true);
                 } else {
                     // print client-oriented error message
                     const error_message = topic_result.error;
@@ -97,6 +104,11 @@ const TopicListView: React.FC = () => {
             console.error("Error fetching topics:", error);
             setError("Network error :(");
         }
+    };
+
+    const handleDeleteTopic = (topic_id: number) => {
+        setTopics((topics) => topics.filter((topic) => topic.id !== topic_id));
+        setShowDeleteSuccess(true);
     };
 
     // navigate to login page if not login yet
@@ -128,11 +140,12 @@ const TopicListView: React.FC = () => {
                             id: topic.id,
                             name: topic.name,
                             description: topic.description,
+                            user_id: topic.user_id,
                             author: topic.author,
                             timestamp: new Date(topic.created_at),
                         }));
 
-                        setTopics(topicList);
+                        setTopics(topicList.reverse());
                     }
                 } else {
                     console.error("Failed to GET topics: %s", data_json.error);
@@ -165,6 +178,7 @@ const TopicListView: React.FC = () => {
                     sx={{
                         whiteSpace: "nowrap",
                         fontSize: { xs: "2.5rem", sm: "3rem", md: "3.5rem" },
+                        paddingTop: "4.5rem",
                         mb: "3rem",
                         background: "linear-gradient(45deg, #2E3192, #1BFFFF)",
                         WebkitBackgroundClip: "text",
@@ -198,7 +212,40 @@ const TopicListView: React.FC = () => {
                                 <AddIcon sx={{ fontSize: 16 }} />
                             </IconButton>
                         </Box>
-                        <TopicList topics={topics} />
+
+                        <Snackbar
+                            open={showSuccess}
+                            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                            autoHideDuration={3000}
+                            onClose={() => setShowSuccess(false)}
+                        >
+                            <Alert
+                                onClose={() => setShowSuccess(false)}
+                                severity="success"
+                                variant="filled"
+                                sx={{ width: "100%" }}
+                            >
+                                New Topic Added!
+                            </Alert>
+                        </Snackbar>
+
+                        <Snackbar
+                            open={showDeleteSuccess}
+                            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                            autoHideDuration={3000}
+                            onClose={() => setShowDeleteSuccess(false)}
+                        >
+                            <Alert
+                                onClose={() => setShowDeleteSuccess(false)}
+                                severity="success"
+                                variant="filled"
+                                sx={{ width: "100%" }}
+                            >
+                                Topic Deleted!
+                            </Alert>
+                        </Snackbar>
+
+                        <TopicList topics={topics} user_id={userID} onDeleteTopic={handleDeleteTopic} />
                     </>
                 )}
             </Box>

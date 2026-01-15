@@ -203,7 +203,7 @@ func EditTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{},
 		w.WriteHeader(http.StatusForbidden)
 		return &models.TopicsResult{
 				Success: false,
-				Error: fmt.Sprintf("User: %d does not have right to edit this topic: %d", userID, topic_id),
+				Error: "You don't have the right to edit this topic",
 			}, nil	
 	}
 
@@ -271,7 +271,7 @@ func DeleteTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{
 		w.WriteHeader(http.StatusForbidden)
 		return &models.TopicsResult{
 				Success: false,
-				Error: fmt.Sprintf("User: %d does not have right to delete topic: %d", userID, topic_id),
+				Error: "You does not have the right to delete this topic",
 			}, nil	
 	}
 
