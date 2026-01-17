@@ -37,9 +37,9 @@ const PostListView: React.FC = () => {
     const [userID, setUserID] = useState<number | null>(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
+    const [server_error, setServerError] = useState(false);
     const navigate = useNavigate();
     const { topicID } = useParams<{ topicID: string }>(); // Get topicID from URL params
-    const [server_error, setServerError] = useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);

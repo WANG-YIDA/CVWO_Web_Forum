@@ -253,7 +253,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 		w.WriteHeader(http.StatusForbidden)
 		return &models.CommentsResult {
 				Success: false,
-				Error: fmt.Sprintf("You don't have the right to delete this comment: %d", comment_id),
+				Error: fmt.Sprint("You don't have the right to delete this comment"),
 			}, nil	
 	}
 

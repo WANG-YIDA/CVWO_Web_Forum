@@ -258,7 +258,7 @@ func EditPost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, 
 		w.WriteHeader(http.StatusForbidden)
 		return &models.PostsResult{
 				Success: false,
-				Error: fmt.Sprintf("You don't have the right to edit this post: %d", post_id),
+				Error: fmt.Sprint("You don't have the right to edit this post"),
 			}, nil	
 	}
 
@@ -351,7 +351,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}
 		w.WriteHeader(http.StatusForbidden)
 		return &models.PostsResult{
 				Success: false,
-				Error: fmt.Sprintf("You don't have the right to delete this post: %d", post_id),
+				Error: fmt.Sprint("You don't have the right to delete this post"),
 			}, nil	
 	}
 
