@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	InvalidPostTitle = `Invalid Post Title: must consist of 3-100 characters in a-zA-Z0-9 .,!?'"()_\-`
+	InvalidPostTitle = `Invalid Post Title: must be 3-100 characters long and contain only letters, numbers, spaces, or these symbols: . , ! ? ' " ( ) _ -`
 	InvalidPostContent = `Invalid Post Content Pattern: exceeds max character limit or contains invalid symbol(s)`
 )
 
