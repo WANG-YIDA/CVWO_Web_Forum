@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
-const API_PORT = process.env.REACT_APP_API_PORT;
+const API_PORT = process.env.PORT;
 const API_URL = `${API_DOMAIN}:${API_PORT}`;
 
 const Login: React.FC = () => {

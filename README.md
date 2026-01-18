@@ -80,7 +80,7 @@ Create a file named `.env` in the `client` directory with:
 
 ```
 REACT_APP_API_DOMAIN=http://localhost
-REACT_APP_API_PORT=8000
+PORT=8000
 ```
 
 #### Backend (`.env` or shell export)
@@ -89,7 +89,7 @@ Set the environment variable before running the backend:
 
 ```
 FRONTEND_ORIGIN_DOMAIN=http://localhost
-FRONTEND_ORIGIN_PORT=3000
+PORT=3000
 ```
 
 Or export in your shell:

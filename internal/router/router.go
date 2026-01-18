@@ -15,7 +15,7 @@ func Setup(db *sql.DB) chi.Router {
 
 	// CORS Middleware
 	frontendOriginDomain := os.Getenv("FRONTEND_ORIGIN_DOMAIN")
-	frontendOriginPort := os.Getenv("FRONTEND_ORIGIN_PORT")
+	frontendOriginPort := os.Getenv("PORT")
 	frontendOrigin := fmt.Sprintf("%s:%s", frontendOriginDomain, frontendOriginPort)
 	if frontendOrigin == "" {
 		frontendOrigin = "http://localhost:3000" // fallback for local dev
