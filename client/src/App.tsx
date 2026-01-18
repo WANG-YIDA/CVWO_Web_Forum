@@ -24,7 +24,7 @@ const App: React.FC = () => {
 
     useEffect(() => {
         //for testing connection with backend
-        fetch(${API_URL}/api/handshake")
+        fetch(`${API_URL}/api/handshake`)
             .then((res) => res.json())
             .then((data) => console.log(data.message))
             .catch((err) => console.log("Connection failed: " + err));
