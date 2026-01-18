@@ -72,6 +72,31 @@ git clone https://github.com/WANG-YIDA/CVWO_Web_Forum.git
 - If you encounter CORS issues, make sure CORS is enabled in the Go backend.
 - Default backend API URL is `http://localhost:8000`.
 
+### 6. Environment Variables
+
+#### Frontend (`client/.env`)
+
+Create a file named `.env` in the `client` directory with:
+
+```
+REACT_APP_API_URL=http://localhost:8000
+```
+
+#### Backend (`.env` or shell export)
+
+Set the environment variable before running the backend:
+
+```
+FRONTEND_ORIGIN=http://localhost:3000
+```
+
+Or export in your shell:
+
+```sh
+export FRONTEND_ORIGIN=http://localhost:3000
+go run cmd/server/main.go
+```
+
 ## Project Structure
 
 ```

@@ -23,6 +23,9 @@ type Props = {
     topic_id: string | null;
     onDeleteComment: (comment_id: number) => void;
 };
+
+const API_URL = process.env.REACT_APP_API_URL;
+
 const useStyles = makeStyles(() => ({
     commentBody: {
         fontSize: 16,
@@ -82,7 +85,7 @@ const CommentItem: React.FC<Props> = ({ comment, user_id, topic_id, onDeleteComm
         try {
             // Request to DELETE current comment
             const response = await fetch(
-                "http://localhost:8000/api/topics/" +
+                `${API_URL}/api/topics/` +
                     topic_id +
                     "/posts/" +
                     comment.post_id.toString() +

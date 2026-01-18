@@ -28,6 +28,8 @@ type Props = {
     onDeleteTopic: (topic_id: number) => void;
 };
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const useStyles = makeStyles(() => ({
     topicName: {
         fontSize: 32,
@@ -97,7 +99,7 @@ const TopicItem: React.FC<Props> = ({ topic, user_id, onDeleteTopic }) => {
 
         try {
             // Request to PATCH current topic
-            const response = await fetch("http://localhost:8000/api/topics/" + cur_topic.id.toString(), {
+            const response = await fetch(`${API_URL}/api/topics/` + cur_topic.id.toString(), {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ description: topic_description, user_id: user_id }),
@@ -142,7 +144,7 @@ const TopicItem: React.FC<Props> = ({ topic, user_id, onDeleteTopic }) => {
         setDeleteError("");
         try {
             // Request to DELETE current topic
-            const response = await fetch("http://localhost:8000/api/topics/" + cur_topic.id.toString(), {
+            const response = await fetch(`${API_URL}/api/topics/` + cur_topic.id.toString(), {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ user_id: user_id }),

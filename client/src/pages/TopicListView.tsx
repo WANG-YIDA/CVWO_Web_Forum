@@ -29,6 +29,8 @@ interface TopicJSON {
     created_at: string;
 }
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const fadeIn = keyframes`
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
@@ -68,7 +70,7 @@ const TopicListView: React.FC = () => {
 
         try {
             // Request to POST topics
-            const response = await fetch("http://localhost:8000/api/topics", {
+            const response = await fetch(`${API_URL}/api/topics`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: topic_name, description: topic_description, user_id: userID }),
@@ -127,7 +129,7 @@ const TopicListView: React.FC = () => {
         const fetchTopics = async () => {
             try {
                 // Request to GET Topics
-                const response = await fetch("http://localhost:8000/api/topics", {
+                const response = await fetch(`${API_URL}/api/topics`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
