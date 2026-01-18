@@ -16,7 +16,7 @@ const CommentList: React.FC<Props> = ({ comments, user_id, topic_id, onDeleteCom
     }
 
     return (
-        <Box sx={{ padding: 2, maxWidth: 1000, margin: "0 auto" }}>
+        <Box sx={{ padding: 2, maxWidth: 750, width: "100%", margin: "0 auto" }}>
             {comments.map((comment) => (
                 <CommentItem
                     comment={comment}

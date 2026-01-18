@@ -6,10 +6,20 @@ import React, { useEffect, useState } from "react";
 import { Alert, Box, Button, Snackbar, TextField, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 
+interface CommentJSON {
+    id: number;
+    content: string;
+    user_id: number;
+    post_id: number;
+    author: string;
+    created_at: string;
+}
+
 const PostItemView: React.FC = () => {
     const [topicName, setTopicName] = useState("");
     const [post, setPost] = useState<Post>();
     const [comments, setComments] = useState<Comment[]>([]);
+    const [commentInput, setCommentInput] = useState("");
     const [showCreateCommentSuccess, setShowCreateCommentSuccess] = useState(false);
     const [showDeleteCommentSuccess, setShowDeleteCommentSuccess] = useState(false);
     const [createCommentError, setCreateCommentError] = useState("");
@@ -33,11 +43,14 @@ const PostItemView: React.FC = () => {
 
         try {
             // Request to POST comments
-            const response = await fetch("http://localhost:8000/api/topics/" + topicID + "/posts/" + postID, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content: comment_content, user_id: userID }),
-            });
+            const response = await fetch(
+                "http://localhost:8000/api/topics/" + topicID + "/posts/" + postID + "/comments",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ content: comment_content, user_id: userID }),
+                },
+            );
             const data_json = await response.json();
 
             // process data to get result
@@ -47,7 +60,7 @@ const PostItemView: React.FC = () => {
                 if (comment_result.success && comment_result.comment) {
                     const new_comment: Comment = {
                         id: comment_result.comment.id,
-                        post_id: comment_result.post_id,
+                        post_id: comment_result.comment.post_id,
                         user_id: comment_result.comment.user_id,
                         content: comment_result.comment.content,
                         author: comment_result.comment.author,
@@ -55,6 +68,7 @@ const PostItemView: React.FC = () => {
                     };
 
                     // put new comment at top, close dialog then show success message
+                    setCommentInput("");
                     setComments((comments) => [new_comment, ...comments]);
                     setShowCreateCommentSuccess(true);
                 } else {
@@ -124,6 +138,44 @@ const PostItemView: React.FC = () => {
             }
         };
 
+        const fetchComments = async () => {
+            try {
+                // Request to GET comments
+                const response = await fetch(
+                    "http://localhost:8000/api/topics/" + topicID + "/posts/" + postID + "/comments",
+                    {
+                        method: "GET",
+                        headers: { "Content-Type": "application/json" },
+                    },
+                );
+                const data_json = await response.json();
+
+                // process data to get comments
+                if (data_json.success && data_json.payload?.data) {
+                    const commentListResult = data_json.payload.data;
+
+                    if (commentListResult.success && commentListResult.comments) {
+                        const commentList: Comment[] = commentListResult.comments.map((comment: CommentJSON) => ({
+                            id: comment.id,
+                            post_id: comment.post_id,
+                            content: comment.content,
+                            user_id: comment.user_id,
+                            author: comment.author,
+                            timestamp: new Date(comment.created_at),
+                        }));
+
+                        setComments(commentList);
+                    }
+                } else {
+                    console.error("Failed to GET post: %s", data_json.error);
+                    setServerError(true);
+                }
+            } catch (error) {
+                console.error("Error fetching post:", error);
+                setServerError(true);
+            }
+        };
+
         // get topic name
         const fetchTopic = async () => {
             try {
@@ -143,7 +195,7 @@ const PostItemView: React.FC = () => {
                         setTopicName(topic_name);
                     }
                 } else {
-                    console.error("Failred to GET topic: %s", data_json.error);
+                    console.error("Failed to GET topic: %s", data_json.error);
                     setServerError(true);
                 }
             } catch (error) {
@@ -154,6 +206,7 @@ const PostItemView: React.FC = () => {
 
         fetchTopic();
         fetchPost();
+        fetchComments();
     }, []);
 
     const handleDeleteComment = (comment_id: number) => {
@@ -162,7 +215,7 @@ const PostItemView: React.FC = () => {
     };
 
     const handleDeletePost = () => {
-        navigate("topics/" + topicID + "/posts");
+        navigate("/topics/" + topicID + "/posts");
     };
 
     return server_error ? (
@@ -189,7 +242,7 @@ const PostItemView: React.FC = () => {
                 <div>Loading post...</div>
             )}
 
-            <Box sx={{ maxWidth: 1000, width: "100%", mx: "auto", px: 2, mt: 4, textAlign: "left" }}>
+            <Box sx={{ maxWidth: 800, width: "100%", mx: "auto", px: 2, mt: 4, textAlign: "left" }}>
                 <Typography
                     variant="h5"
                     color="textSecondary"
@@ -219,27 +272,37 @@ const PostItemView: React.FC = () => {
                                     color: "#222",
                                 },
                                 "& .MuiOutlinedInput-notchedOutline": {
-                                    borderColor: "#1976d2",
+                                    borderColor: "#6097e4ff",
                                 },
                                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                                    borderColor: "#1565c0",
+                                    borderColor: "#1966beff",
+                                },
+                                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#66a3e9ff",
                                 },
                                 "& .MuiInputLabel-root": {
                                     color: "#1976d2",
                                 },
                             }}
+                            value={commentInput}
+                            onChange={(e) => setCommentInput(e.target.value)}
                         />
                         <Button
                             type="submit"
+                            variant="outlined"
                             sx={{
                                 height: "45px",
-                                mt: 2,
+                                mt: 2.25,
                                 ml: 2,
                                 mr: -2,
                                 whiteSpace: "nowrap",
-                                color: "#003c8f",
+                                color: "#407cd1ff",
                                 letterSpacing: 1,
-                                borderColor: "#003c8f",
+                                borderColor: "#6097e4ff",
+                                "&:hover": {
+                                    backgroundColor: "#66a3e9ff",
+                                    color: "#fff",
+                                },
                             }}
                         >
                             Create

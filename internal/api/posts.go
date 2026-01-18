@@ -16,12 +16,12 @@ import (
 )
 
 const (
-	InvalidPostTitle = `Invalid Post Title: must consist of 3-50 characters in a-zA-Z0-9 .,!?'"()_\-`
-	InvalidPostContent = `Invalid Post Content: must consist of 1-500 characters in a-zA-Z0-9 .,!?'"()_\-`
+	InvalidPostTitle = `Invalid Post Title: must consist of 3-100 characters in a-zA-Z0-9 .,!?'"()_\-`
+	InvalidPostContent = `Invalid Post Content Pattern: exceeds max character limit or contains invalid symbol(s)`
 )
 
-var validPostTitlePattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{3,50}$`)
-var validPostContentPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{1,500}$`)
+var validPostTitlePattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{3,100}$`)
+var validPostContentPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{1,1000}$`)
 
 func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get post title, user id, topic_id, content from request 
@@ -258,7 +258,7 @@ func EditPost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, 
 		w.WriteHeader(http.StatusForbidden)
 		return &models.PostsResult{
 				Success: false,
-				Error: fmt.Sprint("You don't have the right to edit this post"),
+				Error: "You don't have the right to edit this post",
 			}, nil	
 	}
 
@@ -351,7 +351,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}
 		w.WriteHeader(http.StatusForbidden)
 		return &models.PostsResult{
 				Success: false,
-				Error: fmt.Sprint("You don't have the right to delete this post"),
+				Error: "You don't have the right to delete this post",
 			}, nil	
 	}
 

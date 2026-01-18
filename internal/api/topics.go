@@ -16,12 +16,12 @@ import (
 )
 
 const (
-	InvalidTopicName = "Invalid Topic Name: must consist of 3-16 alphannumeric characters, _ or - (without spacing)"
+	InvalidTopicName = "Invalid Topic Name: must consist of 3-50 alphannumeric characters, _ or - (without spacing)"
 	InvalidDescriptionPattern = `Invalid Description Pattern: exceeds max character limit or contains invalid symbol(s)`
 )
 
-var validTopicNamePattern = regexp.MustCompile(`^[a-zA-Z0-9_-]{3,16}$`)
-var validTopicDescriptionPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{0,120}$`)
+var validTopicNamePattern = regexp.MustCompile(`^[a-zA-Z0-9_-]{3,50}$`)
+var validTopicDescriptionPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{0,500}$`)
 
 func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get topic name from request 

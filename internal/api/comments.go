@@ -16,10 +16,10 @@ import (
 )
 
 const (
-	InvalidCommentContent = `Invalid Comment Content: must consist of 1-250 characters in a-zA-Z0-9 .,!?'"()_\-`
+	InvalidCommentContent = `Invalid Comment Content Pattern: exceeds max character limit or contains invalid symbol(s)`
 )
 
-var validCommentContentPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{1,250}$`)
+var validCommentContentPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{1,1000}$`)
 
 func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get comment topic id, post id, user id, content from request 
@@ -253,7 +253,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interfac
 		w.WriteHeader(http.StatusForbidden)
 		return &models.CommentsResult {
 				Success: false,
-				Error: fmt.Sprint("You don't have the right to delete this comment"),
+				Error: "You don't have the right to delete this comment",
 			}, nil	
 	}
 

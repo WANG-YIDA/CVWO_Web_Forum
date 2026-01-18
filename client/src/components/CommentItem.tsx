@@ -29,11 +29,15 @@ const useStyles = makeStyles(() => ({
         whiteSpace: "pre-wrap",
         paddingBottom: "0.4em",
         textAlign: "left",
+        wordBreak: "break-word",
     },
     commentCard: {
-        width: 800,
+        width: "100%",
+        maxWidth: 750,
         marginBottom: "0.75rem",
-        padding: "6px",
+        padding: "3px",
+        marginLeft: 0,
+        marginRight: 0,
     },
     cardContent: {
         display: "flex",
@@ -50,7 +54,7 @@ const useStyles = makeStyles(() => ({
         display: "flex",
         justifyContent: "flex-end",
         alignItems: "center",
-        padding: "0 16px 12px",
+        padding: "0 16px 3px",
     },
 }));
 
@@ -72,17 +76,18 @@ const CommentItem: React.FC<Props> = ({ comment, user_id, topic_id, onDeleteComm
     };
 
     const handleDeleteComfirm = async () => {
-        // clear previous error
+        // clear previous error message
         setDeleteError("");
+
         try {
             // Request to DELETE current comment
             const response = await fetch(
                 "http://localhost:8000/api/topics/" +
                     topic_id +
                     "/posts/" +
-                    comment.post_id +
+                    comment.post_id.toString() +
                     "/comments/" +
-                    comment.id,
+                    comment.id.toString(),
                 {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
@@ -119,7 +124,13 @@ const CommentItem: React.FC<Props> = ({ comment, user_id, topic_id, onDeleteComm
             <Card className={classes.commentCard}>
                 <CardContent className={classes.cardContent}>
                     <Box
-                        sx={{ width: "100%", maxWidth: 800, padding: "0 16px", margin: "0 auto", position: "relative" }}
+                        sx={{
+                            width: "100%",
+                            maxWidth: "100%",
+                            padding: "0 16px",
+                            margin: "0 auto",
+                            position: "relative",
+                        }}
                     >
                         {user_id === comment.user_id && (
                             <IconButton

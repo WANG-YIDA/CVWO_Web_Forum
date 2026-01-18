@@ -40,6 +40,7 @@ const useStyles = makeStyles(() => ({
         whiteSpace: "pre-wrap",
         paddingBottom: "1em",
         textAlign: "left",
+        wordBreak: "break-word",
     },
     topicCard: {
         width: "100%",
@@ -264,6 +265,7 @@ const TopicItem: React.FC<Props> = ({ topic, user_id, onDeleteTopic }) => {
                             id="topic-description"
                             name="topic-description"
                             label="Description"
+                            defaultValue={cur_topic.description}
                             type="text"
                             fullWidth
                             multiline

@@ -42,9 +42,10 @@ const useStyles = makeStyles(() => ({
         textAlign: "left",
         lineHeight: 1.6,
         letterSpacing: "0.01em",
+        wordBreak: "break-word",
     },
     postCard: {
-        maxWidth: 1000,
+        maxWidth: 800,
         width: "100%",
         marginBottom: "3em",
         padding: "8px",
@@ -105,7 +106,7 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(formData.entries() as Iterable<[string, FormDataEntryValue]>);
         const post_title = formJson["post-title"];
-        const post_content = formJson["post_content"];
+        const post_content = formJson["post-content"];
 
         try {
             // Request to PATCH current post
@@ -114,7 +115,7 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
                 {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ title: post_title, content: post_content }),
+                    body: JSON.stringify({ title: post_title, content: post_content, user_id: user_id }),
                 },
             );
             const data_json = await response.json();
@@ -209,61 +210,73 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
                 </Alert>
             </Snackbar>
             <Box sx={{ maxWidth: 1000, width: "100%", mx: "auto", px: 2 }}>
-                <Typography fontSize={15} color="textSecondary" gutterBottom align="left" marginBottom={2}>
-                    <Link href="/topics">Topics</Link>
-                    {" > "}
-                    <Link href={`/topics/${cur_post.topic_id}/posts`}>{topic_name}</Link>
-                    {" > "}
-                    {cur_post.title}
-                </Typography>
-                <Card className={classes.postCard}>
-                    <CardContent>
-                        <Box display="flex" alignItems="center" justifyContent="space-between" gap={2}>
-                            <Typography variant="h5" className={classes.postTitle}>
-                                {cur_post.title}
+                <Box sx={{ maxWidth: 800, mx: "auto", width: "100%", mb: 1, textAlign: "left" }}>
+                    <Typography color="textSecondary" fontSize={15}>
+                        <Link href="/topics">Topics</Link>
+                        {" > "}
+                        <Link href={`/topics/${cur_post.topic_id}/posts`}>{topic_name}</Link>
+                        {" > "}
+                        {cur_post.title}
+                    </Typography>
+                </Box>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        width: "100%",
+                        mt: 1,
+                    }}
+                >
+                    <Card className={classes.postCard}>
+                        <CardContent>
+                            <Box display="flex" alignItems="center" justifyContent="space-between" gap={2}>
+                                <Typography variant="h5" className={classes.postTitle}>
+                                    {cur_post.title}
+                                </Typography>
+                                {cur_post.user_id === user_id && (
+                                    <Box display="flex" gap={0.5} sx={{ alignSelf: "flex-start", mt: -0.5, mr: -1 }}>
+                                        <IconButton
+                                            size="small"
+                                            aria-label="edit topic"
+                                            sx={{ p: 0.25 }}
+                                            onClick={handleEditPostClickOpen}
+                                        >
+                                            <ModeEditIcon fontSize="small" />
+                                        </IconButton>
+                                        <IconButton
+                                            size="small"
+                                            aria-label="delete topic"
+                                            sx={{ p: 0.25 }}
+                                            onClick={handleDeletePostClickOpen}
+                                        >
+                                            <DeleteIcon fontSize="small" />
+                                        </IconButton>
+                                    </Box>
+                                )}
+                            </Box>
+                            <Typography variant="body2" color="textPrimary" className={classes.postBody} component="p">
+                                {cur_post.content}
                             </Typography>
-                            {cur_post.user_id === user_id && (
-                                <Box display="flex" gap={0.5} sx={{ alignSelf: "flex-start", mt: -0.5, mr: -1 }}>
-                                    <IconButton
-                                        size="small"
-                                        aria-label="edit topic"
-                                        sx={{ p: 0.25 }}
-                                        onClick={handleEditPostClickOpen}
-                                    >
-                                        <ModeEditIcon fontSize="small" />
-                                    </IconButton>
-                                    <IconButton
-                                        size="small"
-                                        aria-label="delete topic"
-                                        sx={{ p: 0.25 }}
-                                        onClick={handleDeletePostClickOpen}
-                                    >
-                                        <DeleteIcon fontSize="small" />
-                                    </IconButton>
+                        </CardContent>
+                        <CardActions className={classes.cardActions}>
+                            <Box sx={{ flex: 1, display: "flex", justifyContent: "space-between", width: "100%" }}>
+                                <Box sx={{ textAlign: "left" }}>
+                                    <Typography color="textSecondary" className={classes.metadata}>
+                                        {"Topics > " + topic_name}
+                                    </Typography>
                                 </Box>
-                            )}
-                        </Box>
-                        <Typography variant="body2" color="textPrimary" className={classes.postBody} component="p">
-                            {cur_post.content}
-                        </Typography>
-                    </CardContent>
-                    <CardActions className={classes.cardActions}>
-                        <Box sx={{ flex: 1, display: "flex", justifyContent: "space-between", width: "100%" }}>
-                            <Box sx={{ textAlign: "left" }}>
-                                <Typography color="textSecondary" className={classes.metadata}>
-                                    {"Topics > " + topic_name}
-                                </Typography>
+                                <Box sx={{ textAlign: "right" }}>
+                                    <Typography color="textSecondary" className={classes.metadata}>
+                                        {"Posted by "}
+                                        <strong>{cur_post.author}</strong>
+                                        {" on " + cur_post.timestamp.toLocaleString()}
+                                    </Typography>
+                                </Box>
                             </Box>
-                            <Box sx={{ textAlign: "right" }}>
-                                <Typography color="textSecondary" className={classes.metadata}>
-                                    {"Posted by "}
-                                    <strong>{cur_post.author}</strong>
-                                    {" on " + cur_post.timestamp.toLocaleString()}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </CardActions>
-                </Card>
+                        </CardActions>
+                    </Card>
+                </Box>
 
                 <Dialog
                     open={editPostOpen}
