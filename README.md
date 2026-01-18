@@ -2,6 +2,8 @@
 
 A full-stack web forum application built with Go (backend) and React (frontend).
 
+Public Link: https://cvwo-web-forum-jc0a.onrender.com/login
+
 ## Table of Contents
 
 - Features

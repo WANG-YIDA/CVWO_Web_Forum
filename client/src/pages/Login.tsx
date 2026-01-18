@@ -1,5 +1,5 @@
 import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -52,6 +52,14 @@ const Login: React.FC = () => {
             setError("Network error :(");
         }
     };
+
+    // navigate to topics page if login already
+    useEffect(() => {
+        const user_id = sessionStorage.getItem("user_id");
+        if (user_id) {
+            navigate("/topics");
+        }
+    }, [navigate]);
 
     return (
         <div>
