@@ -285,7 +285,7 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
                     fullWidth
                     sx={{ "& .MuiDialog-paper": { width: "100%", maxWidth: 700 } }}
                 >
-                    <DialogTitle>Edit Topic</DialogTitle>
+                    <DialogTitle>Edit Post</DialogTitle>
                     <DialogContent>
                         <form onSubmit={handleEditPostSubmit} id="edit-post-form" style={{ paddingTop: 2 }}>
                             <TextField
@@ -333,7 +333,7 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{"Delete Topic"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{"Delete Post"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             Would you like to permanently delete this post?

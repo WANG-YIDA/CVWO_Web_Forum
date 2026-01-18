@@ -169,7 +169,7 @@ const CommentItem: React.FC<Props> = ({ comment, user_id, topic_id, onDeleteComm
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title">{"Delete Topic"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"Delete Comment"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
                         Would you like to permanently delete this comment?

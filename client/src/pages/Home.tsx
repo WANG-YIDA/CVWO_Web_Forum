@@ -58,7 +58,6 @@ const Home: React.FC = () => {
                         hideButton();
                         typewriter
                             .changeDelay(40)
-                            .pauseFor(500)
                             .typeString("Welcome To CVWO Web Forum")
                             .callFunction(showButton)
                             .start();
@@ -72,7 +71,7 @@ const Home: React.FC = () => {
                 component={Link}
                 to="/login"
                 style={{
-                    fontSize: "1.5rem",
+                    fontSize: "1rem",
                     padding: "1rem 2.5rem",
                     opacity: isShowButton ? 1 : 0,
                     transition: "opacity 1.5s ease-in-out",

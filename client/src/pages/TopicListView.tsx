@@ -18,7 +18,7 @@ import {
     Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface TopicJSON {
     id: number;
@@ -175,7 +175,6 @@ const TopicListView: React.FC = () => {
             style={{
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "center",
                 alignItems: "center",
                 minHeight: "100vh",
                 textAlign: "center",
@@ -206,7 +205,10 @@ const TopicListView: React.FC = () => {
                     <Typography sx={{ mt: 4, color: "text.secondary" }}>Loading topics...</Typography>
                 ) : (
                     <>
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 1, mb: 1.5 }}>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", mr: 1 }}>
+                            <Button component={Link} to="/">
+                                {"< Home"}
+                            </Button>
                             <IconButton
                                 aria-label="add"
                                 sx={{
