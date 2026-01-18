@@ -7,19 +7,21 @@ import (
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/routes"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
+	"github.com/joho/godotenv"
 )
 
 func Setup(db *sql.DB) chi.Router {
 	r := chi.NewRouter()
 
 	// CORS Middleware
-	frontendOriginDomain := os.Getenv("FRONTEND_ORIGIN_DOMAIN")
-	if frontendOriginDomain == "" {
-		frontendOriginDomain = "http://localhost:3000" // fallback for local dev
+	_ = godotenv.Load(".env")
+	frontendOriginURL := os.Getenv("FRONTEND_ORIGIN_URL")
+	if frontendOriginURL == "" {
+		frontendOriginURL = "http://localhost:3000" // fallback for local dev
 	}
 
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{frontendOriginDomain}, 
+		AllowedOrigins: []string{frontendOriginURL}, 
 		AllowedMethods: []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 		AllowCredentials: false,

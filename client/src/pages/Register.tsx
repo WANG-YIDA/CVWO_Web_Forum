@@ -2,7 +2,7 @@ import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
+const API_URL = process.env.REACT_APP_API_URL;
 
 const Register: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -19,7 +19,7 @@ const Register: React.FC = () => {
         //fetch backend for validation and existence check
         try {
             // Request to POST register info
-            const response = await fetch(`${API_DOMAIN}:/api/auth/register`, {
+            const response = await fetch(`${API_URL}/api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username: username }),

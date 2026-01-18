@@ -8,12 +8,14 @@ import (
 
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/database"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/router"
+	"github.com/joho/godotenv"
 )
 
 
 func main() {
-	API_DOMAIN := os.Getenv("REACT_APP_API_DOMAIN")
-    API_PORT := os.Getenv("PORT")
+	_ = godotenv.Load(".env")
+	API_URL := os.Getenv("REACT_APP_API_URL")
+	API_PORT := os.Getenv("PORT")
 
 	// Get DB
 	db, err := database.GetDB()
@@ -25,6 +27,6 @@ func main() {
 	// Routing Setup
 	r := router.Setup(db)
 	
-	fmt.Printf("Listening on port %s at %s", API_PORT, API_DOMAIN)
+	fmt.Printf("Listening at %s", API_URL)
 	log.Fatalln(http.ListenAndServe(":" + API_PORT, r))
 }

@@ -79,7 +79,7 @@ git clone https://github.com/WANG-YIDA/CVWO_Web_Forum.git
 Create a file named `.env` in the `client` directory with:
 
 ```
-REACT_APP_API_DOMAIN=http://localhost
+REACT_APP_API_URL=http://localhost:8000
 ```
 
 #### Backend (`.env` or shell export)
@@ -87,8 +87,8 @@ REACT_APP_API_DOMAIN=http://localhost
 Set the environment variable before running the backend:
 
 ```
-REACT_APP_API_DOMAIN=http://localhost
-FRONTEND_ORIGIN_DOMAIN=http://localhost
+REACT_APP_API_URL=http://localhost:8000
+FRONTEND_ORIGIN_URL=http://localhost:3000
 PORT=8000 # Backend
 ```
 

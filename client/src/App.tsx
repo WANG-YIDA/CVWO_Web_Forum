@@ -17,14 +17,14 @@ const theme = createTheme({
     },
 });
 
-const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
+const API_URL = process.env.REACT_APP_API_URL;
 
 const App: React.FC = () => {
     console.log("Frontend starting, waiting for Go...");
 
     useEffect(() => {
         //for testing connection with backend
-        fetch(`${API_DOMAIN}:/api/handshake`)
+        fetch(`${API_URL}/api/handshake`)
             .then((res) => res.json())
             .then((data) => console.log(data.message))
             .catch((err) => console.log("Connection failed: " + err));

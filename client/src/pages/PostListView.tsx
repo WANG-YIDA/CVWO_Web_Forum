@@ -28,7 +28,7 @@ interface PostJSON {
     created_at: string;
 }
 
-const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
+const API_URL = process.env.REACT_APP_API_URL;
 
 const PostListView: React.FC = () => {
     const [topicName, setTopicName] = useState("");
@@ -66,7 +66,7 @@ const PostListView: React.FC = () => {
 
         try {
             // Request to POST posts
-            const response = await fetch(`${API_DOMAIN}:/api/topics/` + topicID + "/posts", {
+            const response = await fetch(`${API_URL}/api/topics/` + topicID + "/posts", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title: post_title, content: post_content, user_id: userID }),
@@ -123,7 +123,7 @@ const PostListView: React.FC = () => {
         const fetchPosts = async () => {
             try {
                 // Request to GET posts
-                const response = await fetch(`${API_DOMAIN}:/api/topics/` + topicID + "/posts", {
+                const response = await fetch(`${API_URL}/api/topics/` + topicID + "/posts", {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
@@ -162,7 +162,7 @@ const PostListView: React.FC = () => {
         const fetchTopic = async () => {
             try {
                 // Request to GET topic
-                const response = await fetch(`${API_DOMAIN}:/api/topics/` + topicID, {
+                const response = await fetch(`${API_URL}/api/topics/` + topicID, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });

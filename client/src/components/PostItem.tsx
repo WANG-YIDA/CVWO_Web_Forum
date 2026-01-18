@@ -29,7 +29,7 @@ type Props = {
     onDeletePost: () => void;
 };
 
-const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
+const API_URL = process.env.REACT_APP_API_URL;
 
 const useStyles = makeStyles(() => ({
     postTitle: {
@@ -113,7 +113,7 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
         try {
             // Request to PATCH current post
             const response = await fetch(
-                `${API_DOMAIN}:/api/topics/` + cur_post.topic_id.toString() + "/posts/" + cur_post.id.toString(),
+                `${API_URL}/api/topics/` + cur_post.topic_id.toString() + "/posts/" + cur_post.id.toString(),
                 {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
@@ -162,7 +162,7 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
         try {
             // Request to DELETE current post
             const response = await fetch(
-                `${API_DOMAIN}:/api/topics/` + cur_post.topic_id.toString() + "/posts/" + cur_post.id.toString(),
+                `${API_URL}/api/topics/` + cur_post.topic_id.toString() + "/posts/" + cur_post.id.toString(),
                 {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
