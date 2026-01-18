@@ -28,7 +28,9 @@ interface PostJSON {
     created_at: string;
 }
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
+const API_PORT = process.env.REACT_APP_API_PORT;
+const API_URL = `${API_DOMAIN}:${API_PORT}`;
 
 const PostListView: React.FC = () => {
     const [topicName, setTopicName] = useState("");

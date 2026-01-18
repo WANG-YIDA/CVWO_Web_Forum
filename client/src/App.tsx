@@ -17,7 +17,9 @@ const theme = createTheme({
     },
 });
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
+const API_PORT = process.env.REACT_APP_API_PORT;
+const API_URL = `${API_DOMAIN}:${API_PORT}`;
 
 const App: React.FC = () => {
     console.log("Frontend starting, waiting for Go...");

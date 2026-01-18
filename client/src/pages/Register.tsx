@@ -2,7 +2,9 @@ import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
+const API_PORT = process.env.REACT_APP_API_PORT;
+const API_URL = `${API_DOMAIN}:${API_PORT}`;
 
 const Register: React.FC = () => {
     const [username, setUsername] = useState("");
