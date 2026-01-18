@@ -253,6 +253,7 @@ const PostItemView: React.FC = () => {
                 <form onSubmit={handleCreateCommentSubmit} id="create-comment-form" style={{ paddingTop: 2 }}>
                     <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
                         <TextField
+                            required
                             margin="dense"
                             id="comment-content"
                             name="comment-content"

@@ -291,6 +291,7 @@ const PostListView: React.FC = () => {
                             variant="standard"
                         />
                         <TextField
+                            required
                             margin="dense"
                             id="post-content"
                             name="post-content"
