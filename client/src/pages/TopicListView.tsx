@@ -30,8 +30,6 @@ interface TopicJSON {
 }
 
 const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
-const API_PORT = process.env.PORT;
-const API_URL = `${API_DOMAIN}:${API_PORT}`;
 
 const fadeIn = keyframes`
     from { opacity: 0; transform: translateY(12px); }
@@ -72,7 +70,7 @@ const TopicListView: React.FC = () => {
 
         try {
             // Request to POST topics
-            const response = await fetch(`${API_URL}/api/topics`, {
+            const response = await fetch(`${API_DOMAIN}:/api/topics`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: topic_name, description: topic_description, user_id: userID }),
@@ -131,7 +129,7 @@ const TopicListView: React.FC = () => {
         const fetchTopics = async () => {
             try {
                 // Request to GET Topics
-                const response = await fetch(`${API_URL}/api/topics`, {
+                const response = await fetch(`${API_DOMAIN}:/api/topics`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });

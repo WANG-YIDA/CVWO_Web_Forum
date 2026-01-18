@@ -80,7 +80,6 @@ Create a file named `.env` in the `client` directory with:
 
 ```
 REACT_APP_API_DOMAIN=http://localhost
-PORT=8000
 ```
 
 #### Backend (`.env` or shell export)
@@ -88,15 +87,9 @@ PORT=8000
 Set the environment variable before running the backend:
 
 ```
+REACT_APP_API_DOMAIN=http://localhost
 FRONTEND_ORIGIN_DOMAIN=http://localhost
-PORT=3000
-```
-
-Or export in your shell:
-
-```sh
-export FRONTEND_ORIGIN=http://localhost:3000
-go run cmd/server/main.go
+PORT=8000 # Backend
 ```
 
 ## Project Structure

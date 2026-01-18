@@ -18,15 +18,13 @@ const theme = createTheme({
 });
 
 const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
-const API_PORT = process.env.PORT;
-const API_URL = `${API_DOMAIN}:${API_PORT}`;
 
 const App: React.FC = () => {
     console.log("Frontend starting, waiting for Go...");
 
     useEffect(() => {
         //for testing connection with backend
-        fetch(`${API_URL}/api/handshake`)
+        fetch(`${API_DOMAIN}:/api/handshake`)
             .then((res) => res.json())
             .then((data) => console.log(data.message))
             .catch((err) => console.log("Connection failed: " + err));

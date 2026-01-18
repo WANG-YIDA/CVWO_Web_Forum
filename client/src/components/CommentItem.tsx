@@ -25,8 +25,6 @@ type Props = {
 };
 
 const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
-const API_PORT = process.env.PORT;
-const API_URL = `${API_DOMAIN}:${API_PORT}`;
 
 const useStyles = makeStyles(() => ({
     commentBody: {
@@ -87,7 +85,7 @@ const CommentItem: React.FC<Props> = ({ comment, user_id, topic_id, onDeleteComm
         try {
             // Request to DELETE current comment
             const response = await fetch(
-                `${API_URL}/api/topics/` +
+                `${API_DOMAIN}:/api/topics/` +
                     topic_id +
                     "/posts/" +
                     comment.post_id.toString() +

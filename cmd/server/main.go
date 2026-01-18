@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/database"
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/router"
@@ -11,6 +12,9 @@ import (
 
 
 func main() {
+	API_DOMAIN := os.Getenv("REACT_APP_API_DOMAIN")
+    API_PORT := os.Getenv("PORT")
+
 	// Get DB
 	db, err := database.GetDB()
 	if err != nil {
@@ -21,6 +25,6 @@ func main() {
 	// Routing Setup
 	r := router.Setup(db)
 	
-	fmt.Print("Listening on port 8000 at http://localhost:8000")
-	log.Fatalln(http.ListenAndServe(":8000", r))
+	fmt.Printf("Listening on port %s at %s", API_PORT, API_DOMAIN)
+	log.Fatalln(http.ListenAndServe(":" + API_PORT, r))
 }

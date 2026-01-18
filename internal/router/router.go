@@ -2,7 +2,6 @@ package router
 
 import (
 	"database/sql"
-	"fmt"
 	"os"
 
 	"github.com/WANG-YIDA/CVWO_Web_Forum/internal/routes"
@@ -15,14 +14,12 @@ func Setup(db *sql.DB) chi.Router {
 
 	// CORS Middleware
 	frontendOriginDomain := os.Getenv("FRONTEND_ORIGIN_DOMAIN")
-	frontendOriginPort := os.Getenv("PORT")
-	frontendOrigin := fmt.Sprintf("%s:%s", frontendOriginDomain, frontendOriginPort)
-	if frontendOrigin == "" {
-		frontendOrigin = "http://localhost:3000" // fallback for local dev
+	if frontendOriginDomain == "" {
+		frontendOriginDomain = "http://localhost:3000" // fallback for local dev
 	}
 
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{frontendOrigin}, 
+		AllowedOrigins: []string{frontendOriginDomain}, 
 		AllowedMethods: []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 		AllowCredentials: false,

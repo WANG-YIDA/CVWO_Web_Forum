@@ -16,8 +16,6 @@ interface CommentJSON {
 }
 
 const API_DOMAIN = process.env.REACT_APP_API_DOMAIN;
-const API_PORT = process.env.PORT;
-const API_URL = `${API_DOMAIN}:${API_PORT}`;
 
 const PostItemView: React.FC = () => {
     const [topicName, setTopicName] = useState("");
@@ -47,7 +45,7 @@ const PostItemView: React.FC = () => {
 
         try {
             // Request to POST comments
-            const response = await fetch(`${API_URL}/api/topics/` + topicID + "/posts/" + postID + "/comments", {
+            const response = await fetch(`${API_DOMAIN}:/api/topics/` + topicID + "/posts/" + postID + "/comments", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ content: comment_content, user_id: userID }),
@@ -106,7 +104,7 @@ const PostItemView: React.FC = () => {
         const fetchPost = async () => {
             try {
                 // Request to GET post
-                const response = await fetch(`${API_URL}/api/topics/` + topicID + "/posts/" + postID, {
+                const response = await fetch(`${API_DOMAIN}:/api/topics/` + topicID + "/posts/" + postID, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
@@ -142,10 +140,13 @@ const PostItemView: React.FC = () => {
         const fetchComments = async () => {
             try {
                 // Request to GET comments
-                const response = await fetch(`${API_URL}/api/topics/` + topicID + "/posts/" + postID + "/comments", {
-                    method: "GET",
-                    headers: { "Content-Type": "application/json" },
-                });
+                const response = await fetch(
+                    `${API_DOMAIN}:/api/topics/` + topicID + "/posts/" + postID + "/comments",
+                    {
+                        method: "GET",
+                        headers: { "Content-Type": "application/json" },
+                    },
+                );
                 const data_json = await response.json();
 
                 // process data to get comments
@@ -178,7 +179,7 @@ const PostItemView: React.FC = () => {
         const fetchTopic = async () => {
             try {
                 // Request to GET topic
-                const response = await fetch(`${API_URL}/api/topics/` + topicID, {
+                const response = await fetch(`${API_DOMAIN}:/api/topics/` + topicID, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
