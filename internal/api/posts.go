@@ -16,12 +16,12 @@ import (
 )
 
 const (
-	InvalidPostTitle = `Invalid Post Title: must be 3-100 characters long and contain only letters, numbers, spaces, or these symbols: . , ! ? ' " ( ) _ -`
+	InvalidPostTitle = `Invalid Post Title: must be 3-100 characters long and may include any letters, numbers, symbols, punctuation, spaces, or emojis.`
 	InvalidPostContent = `Invalid Post Content Pattern: exceeds max character limit or contains invalid symbol(s)`
 )
 
-var validPostTitlePattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{3,100}$`)
-var validPostContentPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?:+=~'"()_\-\n]{1,1000}$`)
+var validPostTitlePattern = regexp.MustCompile(`^[\p{L}\p{N}\p{P}\p{S} ]{3,100}$`)
+var validPostContentPattern = regexp.MustCompile(`^[\p{L}\p{N}\p{P}\p{S} \n]{1,1000}$`)
 
 func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get post title, user id, topic_id, content from request 

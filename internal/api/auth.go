@@ -14,10 +14,10 @@ import (
 )
 
 const (
-	InvalidUsername = "Invalid Username: must be 3-16 characters long and contain only letters, numbers, spaces, underscores (_), or hyphens (-)"
+	InvalidUsername = "Invalid Username: must be 3-16 characters long and may include any letters, numbers, symbols, punctuation, spaces, or emojis."
 )
 
-var validUsernamePattern = regexp.MustCompile("^[a-zA-Z0-9_ -]{3,16}$")
+var validUsernamePattern = regexp.MustCompile(`^[\p{L}\p{N}\p{P}\p{S} ]{3,16}$`)
 
 func Login(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	//Get username from request

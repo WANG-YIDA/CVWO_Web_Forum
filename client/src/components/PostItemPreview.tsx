@@ -11,7 +11,7 @@ type Props = {
 
 const useStyles = makeStyles(() => ({
     postTitle: {
-        fontSize: 32,
+        fontSize: 24,
         whiteSpace: "pre-wrap",
         paddingBottom: "0.75em",
         textAlign: "left",
