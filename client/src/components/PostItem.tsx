@@ -296,6 +296,7 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
                                 name="post-title"
                                 label="Post Title"
                                 defaultValue={cur_post.title}
+                                required
                                 fullWidth
                                 variant="standard"
                             />
@@ -307,6 +308,7 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
                                 defaultValue={cur_post.content}
                                 type="text"
                                 fullWidth
+                                required
                                 multiline
                                 InputLabelProps={{ shrink: true }}
                                 minRows={8}
