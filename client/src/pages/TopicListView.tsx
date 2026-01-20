@@ -48,6 +48,7 @@ const TopicListView: React.FC = () => {
     const navigate = useNavigate();
 
     const handleClickOpen = () => {
+        setError("");
         setOpen(true);
     };
 

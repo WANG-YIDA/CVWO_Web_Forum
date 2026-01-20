@@ -82,6 +82,7 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
     const [showEditPostSuccess, setShowEditPostSuccess] = useState(false);
 
     const handleEditPostClickOpen = () => {
+        setEditPostError("");
         setEditPostOpen(true);
     };
 
@@ -90,6 +91,7 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
     };
 
     const handleDeletePostClickOpen = () => {
+        setDeletePostError("");
         setDeletePostOpen(true);
     };
 
@@ -257,7 +259,13 @@ const PostItem: React.FC<Props> = ({ post, user_id, topic_name, onDeletePost }) 
                                     </Box>
                                 )}
                             </Box>
-                            <Typography variant="body2" color="textPrimary" className={classes.postBody} component="p">
+                            <Typography
+                                variant="body2"
+                                color="textPrimary"
+                                className={classes.postBody}
+                                component="p"
+                                sx={{ whiteSpace: "pre-line" }}
+                            >
                                 {cur_post.content}
                             </Typography>
                         </CardContent>

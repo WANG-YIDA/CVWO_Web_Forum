@@ -44,6 +44,7 @@ const PostListView: React.FC = () => {
     const { topicID } = useParams<{ topicID: string }>(); // Get topicID from URL params
 
     const handleClickOpen = () => {
+        setError("");
         setOpen(true);
     };
 

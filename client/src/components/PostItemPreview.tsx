@@ -55,7 +55,13 @@ const PostItemPreview: React.FC<Props> = ({ post, topicID }) => {
                     <Typography variant="h5" className={classes.postTitle}>
                         {post.title}
                     </Typography>
-                    <Typography variant="body2" color="textPrimary" className={classes.postBody} component="p">
+                    <Typography
+                        variant="body2"
+                        color="textPrimary"
+                        className={classes.postBody}
+                        sx={{ whiteSpace: "pre-line" }}
+                        component="p"
+                    >
                         {post.content}
                     </Typography>
                 </CardContent>

@@ -71,6 +71,7 @@ const CommentItem: React.FC<Props> = ({ comment, user_id, topic_id, onDeleteComm
     const [deleteError, setDeleteError] = useState("");
 
     const handleDeleteClickOpen = () => {
+        setDeleteError("");
         setDeleteOpen(true);
     };
 
@@ -149,7 +150,7 @@ const CommentItem: React.FC<Props> = ({ comment, user_id, topic_id, onDeleteComm
                         <Typography
                             variant="body2"
                             color="textPrimary"
-                            sx={{ mt: 1, pr: 6 }}
+                            sx={{ mt: 1, pr: 6, whiteSpace: "pre-line" }}
                             className={classes.commentBody}
                             component="p"
                         >

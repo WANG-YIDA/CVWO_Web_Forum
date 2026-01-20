@@ -71,6 +71,7 @@ const TopicItem: React.FC<Props> = ({ topic, user_id, onDeleteTopic }) => {
     const [showEditSuccess, setShowEditSuccess] = useState(false);
 
     const handleDeleteClickOpen = () => {
+        setDeleteError("");
         setDeleteOpen(true);
     };
 
@@ -78,6 +79,7 @@ const TopicItem: React.FC<Props> = ({ topic, user_id, onDeleteTopic }) => {
         setDeleteOpen(false);
     };
     const handleEditClickOpen = () => {
+        setEditError("");
         setEditOpen(true);
     };
 
@@ -223,7 +225,7 @@ const TopicItem: React.FC<Props> = ({ topic, user_id, onDeleteTopic }) => {
                     <Typography
                         variant="body2"
                         color="textPrimary"
-                        sx={{ px: 3 }}
+                        sx={{ whiteSpace: "pre-line", px: 3 }}
                         className={classes.topicDescription}
                         component="p"
                     >
