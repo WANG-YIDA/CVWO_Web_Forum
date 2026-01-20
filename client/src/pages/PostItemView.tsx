@@ -160,7 +160,7 @@ const PostItemView: React.FC = () => {
                             timestamp: new Date(comment.created_at),
                         }));
 
-                        setComments(commentList);
+                        setComments(commentList.reverse());
                     }
                 } else {
                     console.error("Failed to GET post: %s", data_json.error);
