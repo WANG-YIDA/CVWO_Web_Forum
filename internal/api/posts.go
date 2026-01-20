@@ -21,7 +21,7 @@ const (
 )
 
 var validPostTitlePattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{3,100}$`)
-var validPostContentPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{1,1000}$`)
+var validPostContentPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-\n]{1,1000}$`)
 
 func CreatePost(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get post title, user id, topic_id, content from request 
