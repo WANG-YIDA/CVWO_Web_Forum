@@ -21,7 +21,7 @@ const (
 )
 
 var validTopicNamePattern = regexp.MustCompile(`^[a-zA-Z0-9_-]{3,50}$`)
-var validTopicDescriptionPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-]{0,500}$`)
+var validTopicDescriptionPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?:+=~'"()_\-]{0,500}$`)
 
 func CreateTopic(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get topic name from request 

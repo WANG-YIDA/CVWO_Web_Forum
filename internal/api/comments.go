@@ -19,7 +19,7 @@ const (
 	InvalidCommentContent = `Invalid Comment Content Pattern: exceeds max character limit or contains invalid symbol(s)`
 )
 
-var validCommentContentPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?'"()_\-\n]{1,1000}$`)
+var validCommentContentPattern = regexp.MustCompile(`^[a-zA-Z0-9 .,!?:+=~'"()_\-\n]{1,1000}$`)
 
 func CreateComment(w http.ResponseWriter, r *http.Request, db *sql.DB) (interface{}, error) {
 	// Get comment topic id, post id, user id, content from request 
