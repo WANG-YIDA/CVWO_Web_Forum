@@ -15,7 +15,7 @@ Public Link: https://cvwo-web-forum-jc0a.onrender.com
 ## Features
 
 - User registration and login
-- topic, post, comment CRUD
+- topic, post, comment CRUD (Create, Read, Update, Delete)
 
 ## Setup Instructions
 
