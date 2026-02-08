@@ -32,51 +32,7 @@ Public Link: https://cvwo-web-forum-jc0a.onrender.com
 git clone https://github.com/WANG-YIDA/CVWO_Web_Forum.git
 ```
 
-### 2. Backend Setup (Go)
-
-1. Install dependencies:
-   ```sh
-   go mod tidy
-   ```
-2. Start the backend server (default port: 8000):
-   ```sh
-   go run cmd/server/main.go
-   ```
-   Or, for live reload (if you have [air](https://github.com/cosmtrek/air) installed):
-   ```sh
-   air
-   ```
-
-### 3. Frontend Setup (React)
-
-1. Go to the client directory:
-   ```sh
-   cd client
-   ```
-2. Install dependencies:
-   ```sh
-   yarn install
-   # or
-   npm install
-   ```
-3. Start the frontend development server (default port: 3000):
-   ```sh
-   yarn start
-   # or
-   npm start
-   ```
-
-### 4. Access the Application
-
-- Open your browser and go to [http://localhost:3000](http://localhost:3000)
-
-### 5. Notes
-
-- Ensure the backend is running before using the frontend.
-- If you encounter CORS issues, make sure CORS is enabled in the Go backend.
-- Default backend API URL is `http://localhost:8000`.
-
-### 6. Environment Variables
+### 2. Environment Variables
 
 #### Frontend (`client/.env`)
 
@@ -95,6 +51,50 @@ REACT_APP_API_URL=http://localhost:8000
 FRONTEND_ORIGIN_URL=http://localhost:3000
 PORT=8000 # Backend
 ```
+
+### 3. Backend Setup (Go)
+
+1. Install dependencies:
+   ```sh
+   go mod tidy
+   ```
+2. Start the backend server (default port: 8000):
+   ```sh
+   go run cmd/server/main.go
+   ```
+   Or, for live reload (if you have [air](https://github.com/cosmtrek/air) installed):
+   ```sh
+   air
+   ```
+
+### 4. Frontend Setup (React)
+
+1. Go to the client directory:
+   ```sh
+   cd client
+   ```
+2. Install dependencies:
+   ```sh
+   yarn install
+   # or
+   npm install
+   ```
+3. Start the frontend development server (default port: 3000):
+   ```sh
+   yarn start
+   # or
+   npm start
+   ```
+
+### 5. Access the Application
+
+- Open your browser and go to [http://localhost:3000](http://localhost:3000)
+
+### 6. Notes
+
+- Ensure the backend is running before using the frontend.
+- If you encounter CORS issues, make sure CORS is enabled in the Go backend.
+- Default backend API URL is `http://localhost:8000`.
 
 ## Project Structure
 
